@@ -21,6 +21,21 @@ void ShowLayerDebugInfo(OGRLayer *layer) {
     }
 }
 
+int MakeConnectedNode(OGRPoint *p, OGRDataSource *data) {
+     OGRLayer *encLayer =  data->GetLayer(1);
+     OGRFeature *poFeature =OGRFeature::CreateFeature(encLayer->GetLayerDefn());
+     poFeature->SetField(poFeature->GetFieldIndex("RCNM"),RCNM_VC);
+     poFeature->SetGeometry(p);
+     poFeature->SetField(poFeature->GetFieldIndex("RUIN"),1);
+     poFeature->SetField(poFeature->GetFieldIndex("RCID"),gID++);
+     if( encLayer->CreateFeature( poFeature ) != OGRERR_NONE )
+     {
+         printf( "Failed to create feature in shapefile.\n" );
+         return -1;
+     }
+     return gID-1;
+}
+
 int HandleGeometry(OGRFeature *poFeature, OGRDataSource *poOUT) {
     int madeGeoType = 0;
     OGRGeometry *poGeometry;
@@ -34,44 +49,60 @@ int HandleGeometry(OGRFeature *poFeature, OGRDataSource *poOUT) {
     //OGRFeatureDefn * fd = new OGRFeatureDefn("IsolatedNode");
 
     if (wkbFlatten(poGeometry->getGeometryType()) == wkbPoint ) {
-        printf("Making POINT\n");
         encLayer = poOUT->GetLayer(0);
+        printf("Making POINT, %s\n", encLayer->GetName());
         poFeatureO = OGRFeature::CreateFeature(encLayer->GetLayerDefn());            
-        poFeatureO->SetField(poFeatureO->GetFieldIndex("RCNM"),RCNM_VI);        
-        OGRPoint *poPoint = (OGRPoint *) poGeometry;
-        OGRPoint pt;
-        pt.setX( poPoint->getX() );
-        pt.setY( poPoint->getY() );
-        poFeatureO->SetGeometry( poGeometry );
+        poFeatureO->SetField(poFeatureO->GetFieldIndex("RCNM"),RCNM_VI);
         madeGeoType = RCNM_VI;
     } else if (wkbFlatten(poGeometry->getGeometryType()) == wkbLineString ) {
+        OGRLineString *line = (OGRLineString *)poGeometry;
         printf("Making LINESTRING\n");
+        madeGeoType = RCNM_VE;
+        OGRPoint *startPoint = new OGRPoint();
+        line->StartPoint(startPoint); 
+        OGRPoint *endPoint = new OGRPoint();
+        line->EndPoint(endPoint); 
+        int startNode = MakeConnectedNode(startPoint, poOUT);
+        int endNode = MakeConnectedNode(endPoint, poOUT);
         encLayer = poOUT->GetLayer(2);
         poFeatureO = OGRFeature::CreateFeature(encLayer->GetLayerDefn());                
-        poFeatureO->SetField(poFeatureO->GetFieldIndex("RCNM"),RCNM_VE);
+        poFeatureO->SetField(poFeatureO->GetFieldIndex("RCNM"),madeGeoType);
         poFeatureO->SetField(poFeatureO->GetFieldIndex("NAME_RCNM_0"),RCNM_VC);
-        poFeatureO->SetField(poFeatureO->GetFieldIndex("NAME_RCID_0"),0); //FIXME: fill this in
+        poFeatureO->SetField(poFeatureO->GetFieldIndex("NAME_RCID_0"),startNode);
+        poFeatureO->SetField(poFeatureO->GetFieldIndex("NAME_RCNM_1"),RCNM_VC);
+        poFeatureO->SetField(poFeatureO->GetFieldIndex("NAME_RCID_1"),endNode);
         poFeatureO->SetField(poFeatureO->GetFieldIndex("ORNT_0"),255);
         poFeatureO->SetField(poFeatureO->GetFieldIndex("USAG_0"),255);
         poFeatureO->SetField(poFeatureO->GetFieldIndex("TOPI_0"),1);
         poFeatureO->SetField(poFeatureO->GetFieldIndex("MASK_0"),255);
-        madeGeoType = RCNM_VE;
+        
     } else if (wkbFlatten(poGeometry->getGeometryType()) == wkbPolygon) {
         printf("Making POLYGON\n");
+        OGRPolygon *poly = (OGRPolygon *) poGeometry;
+        OGRLineString *line = (OGRLineString *) poly->getExteriorRing();
+       
+        OGRPoint *startPoint = new OGRPoint();
+        line->StartPoint(startPoint); 
+        /*OGRPoint *endPoint = new OGRPoint();
+        line->EndPoint(endPoint); 
+        */
+        int startNode = MakeConnectedNode(startPoint, poOUT);
+        //int endNode = MakeConnectedNode(endPoint, poOUT);
+        
         encLayer = poOUT->GetLayer(2);
         poFeatureO = OGRFeature::CreateFeature(encLayer->GetLayerDefn());            
         //poFeatureO->SetField(poFeatureO->GetFieldIndex("PRIM"),3);
         poFeatureO->SetField(poFeatureO->GetFieldIndex("RCNM"),RCNM_VE);
         poFeatureO->SetField(poFeatureO->GetFieldIndex("NAME_RCNM_0"),RCNM_VC);
-        poFeatureO->SetField(poFeatureO->GetFieldIndex("NAME_RCID_0"),0); //FIXME: fill this in
+        poFeatureO->SetField(poFeatureO->GetFieldIndex("NAME_RCID_0"),startNode);
+        poFeatureO->SetField(poFeatureO->GetFieldIndex("NAME_RCNM_1"),RCNM_VC);
+        poFeatureO->SetField(poFeatureO->GetFieldIndex("NAME_RCID_1"),startNode);
         poFeatureO->SetField(poFeatureO->GetFieldIndex("ORNT_0"),255);
         poFeatureO->SetField(poFeatureO->GetFieldIndex("USAG_0"),255);
         poFeatureO->SetField(poFeatureO->GetFieldIndex("TOPI_0"),1);
         poFeatureO->SetField(poFeatureO->GetFieldIndex("MASK_0"),255);
-        OGRPolygon *poly = (OGRPolygon *) poGeometry;
-        OGRLineString *ls = (OGRLineString *) poly->getExteriorRing();
         
-        poGeometry = ls;
+        poGeometry = line;
         madeGeoType = RCNM_VE;   
     } else if (wkbFlatten(poGeometry->getGeometryType()) == wkbMultiPoint) {
         printf("Making MULTIPOINT\n");
@@ -142,7 +173,7 @@ int main(int argc, char **argv)
     }    
     OGRLayer  *poLayer;
     OGRLayer *encLayer = NULL;
-    OGRFeature **poFeatureList = new OGRFeature*[10000];
+    OGRFeature **poFeatureList = new OGRFeature*[20000];
     int f =0;
     int layers = poDS->GetLayerCount();
     layers = 50; //FIXME - remove this (stops random segfault)
@@ -205,7 +236,7 @@ int main(int argc, char **argv)
             //poFeatureList[f] = OGRFeature::CreateFeature( encLayer->GetLayerDefn() );
             poFeatureList[f] = new OGRFeature(encLayer->GetLayerDefn());
             poFeatureO = poFeatureList[f];
-            poFeatureO->SetField(poFeatureO->GetFieldIndex("RCID"),10000+gID++);
+            poFeatureO->SetField(poFeatureO->GetFieldIndex("RCID"),20000+gID++);
             
             poFeatureO->SetField(poFeatureO->GetFieldIndex("PRIM"),geometryType);
             
@@ -224,7 +255,7 @@ int main(int argc, char **argv)
             // poFeatureO->SetField(poFeatureO->GetFieldIndex("RCID"),poFeature->GetFieldAsInteger(poFeature->GetFieldIndex("id")));
             
             poFeatureO->SetField(poFeatureO->GetFieldIndex("FIDN"),poFeature->GetFieldAsInteger(poFeature->GetFieldIndex("id")));
-            if (madeGeo != 0) {
+            if (madeGeo > 0) {
                 int *gl = new int[1];
                 gl[0] = madeGeo;
                 poFeatureO->SetField(poFeatureO->GetFieldIndex("NAME_RCNM"),1,gl);
@@ -235,7 +266,7 @@ int main(int argc, char **argv)
                 gl[0] = 1;
                 poFeatureO->SetField(poFeatureO->GetFieldIndex("USAG"),1,gl);
                 gl[0] = 2;
-                poFeatureO->SetField(poFeatureO->GetFieldIndex("MASK"),2,gl);
+                poFeatureO->SetField(poFeatureO->GetFieldIndex("MASK"),1,gl);
                 
                 //poFeatureO->SetField(poFeatureO->GetFieldIndex("LNAM_REFS"),
             }
