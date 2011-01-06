@@ -1,0 +1,53 @@
+AL015,Building,12
+AL020,Built-Up Area,13
+AL240,Tower (Non-Communication)
+AP030,Road,116
+AQ040,Bridge/Overpass/Viaduct,11
+AQ113,Pipeline/Pipe,94
+AT005,Cable,22
+AT080,Communication Tower
+BA010,Coastline/Shoreline,30
+BA020,Foreshore
+BA030,Island
+BA040,Water (Except Inland)
+BB010,Anchorage,4
+BB040,Breakwater/Groyne,122
+BB050,Calling-In Point
+BB140,US-Jetty  UK-Training Wall,122
+BB190,US-Pier/Wharf/Quay  UK-Pier/Wharf/Quay/Jetty,122
+BC010,Beacon,5,1
+BC020,Buoy,14,1
+BC040,Light,75
+BC100,Leading Line,85
+BD000,US-Underwater Danger/Hazard  UK-Underwater Danger
+BD030,US-Discolored Water  UK-Discoloured Water
+BD040,Eddies
+BD050,US-Foul Ground  UK-Foul
+BD080,Overfalls/Tide Rips
+BD120,Reef
+BD130,Rock,153
+BD180,Wreck,159
+BE010,Depth Curve,43
+BE020,Sounding,129
+BF010,US-Bottom Characteristics  UK-Quality of the Bottom
+BG010,US-Current Flow  UK-Current Flow/Tidal Stream Direction,136,1
+BG030,US-Tide Data Point  UK-Tidal Stream Observation Station,136,1
+BH020,Canal,23
+BH080,Lake/Pond,69
+BH130,Reservoir
+BH140,River/Stream,114
+BH210,Inland Shoreline
+BI020,Dam/Weir,38
+CA010,Contour Line (Land),72
+CA030,Spot Elevation,72
+DA010,Ground Surface Element
+DB090,Embankment/Fill
+FC021,Maritime Limit Boundary
+FC031,Maritime Area
+FC036,Restricted Area,112
+FC041,Traffic Separation Scheme (TSS),145,1
+FC100,Measured Distance Line
+FC165,Route (Maritime)
+GB005,US-Airport/Airfield  UK-Airport/Airfield/Airstrip,2
+GB055,Runway,2
+ZD040,Named Location,1

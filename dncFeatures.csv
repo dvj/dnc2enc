@@ -1,0 +1,551 @@
+FAC_CODE,FAC_NAME
+AQ130,Tunnel 
+AQ135,US-Vehicle Stopping Area/Rest Area  UK-Vehicle Stopping Area/Rest Area/Lay By
+AQ140,US-Vehicle Storage/Parking Area  UK-Vehicle Storage/Parking Area/Car Park/Boat Park
+AQ150,Flight of Steps  
+AQ151,Arcade
+ARXXX,Feature Place Holder AR
+AT005,Cable  
+AT006,Overhead Cable
+AT010,US-Disk/Dish  UK-Disk Aerial/Dish Aerial
+AT020,Early Warning Radar Site  
+AT030,Power Transmission Line 
+AT040,US-Power Transmission Pylon  UK-Power Transmission Pylon/Pole
+AT041,Telepheric
+AT045,Radar Transmitter
+AT050,Communication Building
+AT060,Telephone Line/Telegraph Line
+AT070,Telephone-Telegraph Pylon/Pole
+AT080,Communication Tower  
+AUXXX,Feature Place Holder AU
+BA010,Coastline/Shoreline
+BA011,Coastline
+AA010,Mine
+AA011,Quarry/Mine Shear Wall
+AA012,Quarry
+AA013,Pit
+AA040,Rig/Superstructure 
+AA050,Well 
+AA051,Wellhead
+AA052,Oil/Gas Field
+AA060,Gradation Works
+AB000,US-Disposal Site/Waste Pile UK-Refuse Tip/Slag Heap
+AB010,Wrecking Yard/Scrap Yard
+AB020,US-Burner   UK-Flare Stack
+AB021,Diffuser
+AB030,Waste Processing Facility
+AC000,Processing Plant/Treatment Plant
+AC010,Blast Furnace 
+AC020,Catalytic Cracker 
+AC030,Settling Basin/Sludge Pond
+AC040,Oil/Gas Facilities
+AC050,Works
+AD010,US-Power Plant  UK-Power Station
+AD020,Solar Panels 
+AD030,Substation/Transformer Yard
+AD040,Nuclear Reactor
+AD050,Heating Plant
+AE010,Assembly Plant
+AF010,Chimney/Smokestack
+AF020,Conveyor
+AF021,Bucket Elevator
+AF030,Cooling Tower  
+AF040,Crane 
+AF041,Sheerlegs  (Shear Legs)
+AF050,US-Dredge/Powershovel/Dragline UK-Dredger/Powershovel/Dragline
+AF060,Engine Test Cell 
+AF070,Flare Pipe 
+AF080,Hopper 
+AGXXX,Feature Place Holder AG
+AH010,Bastion/Rampart/Fortification
+AH020,Trench 
+AH050,Fortification 
+AH060,Underground Bunker 
+AH070,Checkpoint
+AI020,US-Mobile Home/Mobile Home Park  UK-Caravan/Caravan Park/Mobile Home/Mobile Home Park
+AI030,Camp 
+AJ010,Circular Irrigation System
+AJ020,Siphon
+AJ030,Feed Lot/Stockyard/Holding Pen
+AJ050,Windmill 
+AJ051,Windmotor 
+AK020,Amusement Park Attraction  
+AK030,Amusement Park 
+AK040,US-Athletic Field  UK-Athletic Field/Sports Field/Playing Field
+AK050,Tennis Court(s)
+AK060,Campground/Campsite
+AK061,Picnic Site
+AK070,US-Drive In Theater  UK-Drive-in Theatre
+AK080,US-Drive In Theater Screen UK-Drive-in Theatre Screen
+AK090,US-Fairgrounds  UK-Fairground
+AK091,Exhibition Grounds
+AK100,Golf Course 
+AK101,Golf Driving Range 
+AK110,Grandstand  
+AK120,Park 
+AK121,Lookout
+AK122,Green Space
+AK130,US-Race Track  UK-Race Track/Race Course
+AK150,Ski Jump 
+AK155,Ski Track
+AK160,US-Stadium/Amphitheater  UK-Stadium/Ampitheatre
+AK170,Swimming Pool  
+AK180,Zoo/Safari Park
+AK190,Fishing Pier/Promenade Pier
+AL005,Animal Sanctuary 
+AL012,Archeological Site 
+AL015,Building
+AL018,Building Superstructure Addition 
+AL019,Shed
+AL020,Built-Up Area 
+AL021,Historical Built-Up Area
+AL025,Cairn 
+AL030,US-Cemetery  UK-Cemetery/Graveyard
+AL040,Cliff Dwelling
+AL045,Complex Outline 
+AL050,US-Display Sign  UK-Display Sign/Notice Board
+AL060,Dragon Teeth 
+AL070,Fence 
+AL073,Flagstaff/Flagpole
+AL075,Gallery 
+AL080,Gantry 
+AL090,US-Grave Marker   UK-Grave Marker/Tombstone
+AL100,Hut  
+AL101,Cabin
+AL105,Settlement 
+AL110,US-Light Standard/Light Support  UK-Light Standard/Light Support/Lamp Post
+AL116,Calvary Cross
+AL120,Missile Site
+AL130,US-Monument  UK-Monument/Folly
+AL135,Native Settlement 
+AL140,Particle Accelerator
+AL141,Telescope
+AL155,Overhead Obstruction Location 
+AL170,Plaza/City Square 
+AL195,Ramp 
+AL200,Ruins 
+AL201,Historic Site/Point of Interest
+AL210,Snow Shed/Rock Shed
+AL220,US-Steeple   UK-Steeple/Spire
+AL240,Tower (Non-Communication)
+AL241,Tower (General)
+AL250,Underground Dwelling 
+AL260,Wall  
+AM010,Depot (Storage) 
+AM011,Storage Container
+AM020,Grain Bin/Silo
+AM030,Grain Elevator 
+AM031,Timber Yard  
+AM040,US-Mineral Pile   UK-Mineral Pile/Mineral Tip
+AM060,Storage Bunker/Storage Mound
+AM070,Tank 
+AM080,Water Tower
+AN010,US-Railroad  UK-Railway
+AN050,US-Railroad Siding/Railroad Spur UK-Railway Siding/Railway Spur
+AN060,US-Railroad Yard/Marshalling Yard UK-Railway Yard/Marshalling Yard
+AN065,Railhead
+AN075,US-Railroad Turntable  UK-Railway Turntable
+AN080,US-Railroad Switch    UK-Railway Points
+AP010,Cart Track  
+AP020,US-Interchange  UK-Interchange/Complex Junction
+AP030,Road 
+AP040,Gate
+AP041,Barrier 
+AP050,US-Trail  UK-Trail/Footpath
+AP060,Drove
+AQ010,US-Aerial Cableway Lines/Ski Lift Lines  UK-Aerial Cableway Lines/Ski Lift Cables
+AQ020,Aerial Cableway Pylon/Ski Pylon
+AQ021,Mast
+AQ030,US-Boardwalk   UK-Wooden Causeway
+AQ040,Bridge/Overpass/Viaduct
+AQ045,Bridge Span 
+AQ050,Bridge Superstructure 
+AQ055,Bridge Tower/Bridge Pylon
+AQ056,Bridge Pier
+AQ058,Constriction/Expansion
+AQ060,Control Tower
+AQ062,US-Crossing  UK - Crossing/Level Crossing
+AQ064,Causeway
+AQ065,Culvert 
+AQ068,Drop Gate/Rolling Block
+AQ070,Ferry Crossing 
+AQ080,US-Ferry Site  UK-Ferry Station
+AQ090,Entrance/Exit
+AQ100,US-Landmark Post/Distance Post  UK-Landmark Post/Distance Post/Milestone
+AQ110,Mooring Mast 
+AQ111,Prepared Raft or Float Bridge Site
+AQ113,Pipeline/Pipe
+AQ116,Pumping Station 
+AQ118,US-Sharp Curve(s)  UK-Sharp Bend(s)
+AQ119,Route Marker
+AQ120,Steep Grade  
+AQ125,Station (Miscellaneous) 
+BA020,Foreshore
+BA021,Nearshore (Precise IHO)
+BA022,Backshore (Precise IHO)
+BA023,Foreshore (Precise IHO)
+BA024,Shoreline
+BA030,Island
+BA040,Water (Except Inland)
+BA050,Beach
+BA051,Dyke Crown
+BB005,US-Harbor  UK-Harbour
+BB006,US-Harbor Complex   UK-Harbour Complex
+BB007,Channel Edge
+BB010,Anchorage
+BB011,Anchorage (Complex Feature)
+BB012,Anchor Berth
+BB019,Anchor
+BB020,Berth 
+BB021,Mooring Trot
+BB022,Basin
+BB030,Bollard
+BB040,Breakwater/Groyne
+BB041,Breakwater
+BB042,Mole
+BB043,Groin
+BB050,Calling-In Point 
+BB079,Mooring/Warping Facility
+BB080,Dolphin 
+BB081,Shoreline Construction
+BB090,US-Drydock  UK-Dry Dock
+BB100,US-Fish Stakes  UK-Fishing Stakes
+BB105,US-Fishing Harbor  UK-Fishing Harbour
+BB110,Fish Traps/Fish Weirs
+BB111,Tunny (Tuna) Nets Area
+BB115,US-Gridiron  UK-Gridiron/Careening Grid
+BB140,US-Jetty  UK-Training Wall
+BB150,Landing Place 
+BB151,Landing Stairs 
+BB155,Maritime Station/Maritime Signal Station
+BB160,Mooring Ring
+BB170,US-Offshore Loading Facility  UK-Single Point Mooring
+BB180,Oyster Bed/Mussel Bed
+BB190,US-Pier/Wharf/Quay  UK-Pier/Wharf/Quay/Jetty
+BB198,Fender
+BB199,Floating Dock
+BB200,Pump Out Facility
+BB201,Small Craft Facility
+BB202,Ice Boom
+BB220,Ramp (Maritime) 
+BB221,Log Ramp
+BB225,Rip Rap
+BB226,Revetment (Shore Protection)
+BB230,Seawall 
+BB240,Slipway/Patent Slip
+BB250,Watering Place
+BC010,Beacon 
+BC020,Buoy 
+BC030,Leading Light(s)
+BC031,Navigation Line
+BC032,Radar Line
+BC033,Radar Range
+BC035,Lights in Line
+BC040,Light 
+BC050,Lighthouse
+BC055,Marker
+BC060,Light Sector 
+BC070,Light Vessel/Lightship
+BC080,Perches/Stakes
+BC098,"Navigational Mark, Afloat"
+BC099,"Navigational Mark, Fixed"
+BC100,Leading Line 
+BC101,Fog Signal
+BC102,Direction of Lateral Buoyage
+BC110,Topmark
+BD000,US-Underwater Danger/Hazard  UK-Underwater Danger
+BD001,Mine-Naval
+BD005,Miscellaneous Underwater Feature 
+BD010,Breakers 
+BD020,Crib 
+BD030,US-Discolored Water  UK-Discoloured Water
+BD040,Eddies 
+BD050,US-Foul Ground  UK-Foul
+BD060,Kelp/Seaweed
+BD070,Obstruction (Nautical)
+BD071,Log Boom/Booming Ground
+BD072,Pontoon
+BD073,Oil Barrier
+BD074,Chain/Wire
+BD079,Fishing Facility
+BD080,Overfalls/Tide Rips
+BD100,Pile/Piling/Post
+BD110,Platform 
+BD111,Offshore Platform Site (cleared)
+BD112,Production Installation
+BD119,Ledge
+BD120,Reef 
+BD121,Pingo
+BD122,Cay
+BD123,Boom
+BD130,Rock 
+BD140,US-Snags/Stumps  UK-Snags/Submerged Stumps
+BD180,Wreck 
+BD181,Hulk
+BE010,Depth Curve 
+BE015,Depth Contour
+BE019,Depth Area
+BE020,Sounding 
+BE021,"Drying Line,  Low Water Line-LWL"
+BE022,Sand Line
+BE023,Mud Line
+BE029,Bottom Return
+BE030,Track Swath
+BE040,Track Line
+BE050,Beach Profile
+BF010,US-Bottom Characteristics  UK-Quality of the Bottom
+BF011,Bottom Feature
+BG010,US-Current Flow  UK-Current Flow/Tidal Stream Direction
+BG011,Tideway
+BG012,Water Turbulence
+BG020,Tide Gauge
+BG030,US-Tide Data Point  UK-Tidal Stream Observation Station
+BG040,US-Current Diagram  UK-Tidal Stream Diagram
+BH000,Inland Water
+BH010,Aqueduct 
+BH011,Intake
+BH015,Bog
+BH020,Canal 
+BH030,Ditch
+BH040,Filtration Beds/Aeration Beds
+BH050,Fish Hatchery/Fish Farm/Marine Farm
+BH060,Flume
+BH070,Ford  
+BH075,Fountain  
+BH077,Hummock
+BH080,Lake/Pond
+BH090,Land Subject to Inundation 
+BH091,Flooded Area
+BH095,Marsh/Swamp
+BH100,Moat
+BH110,Penstock
+BH115,Underground Water/Phreatic Water
+BH120,Rapids 
+BH130,Reservoir 
+BH135,Rice Field
+BH140,River/Stream 
+BH141,River Bank
+BH145,River/Stream Vanishing Point
+BH150,Salt Pan  
+BH155,Salt Evaporator 
+BH160,Sebkha
+BH165,Spillway
+BH170,Spring/Water Hole
+BH175,Trough
+BH180,Waterfall  
+BH190,Lagoon/Reef Pool
+BH191,Channel
+BH200,Miscellaneous Surface Drainage Feature  
+BH210,Inland Shoreline
+BH501,River Navigation Route
+BI005,Boat Lift
+BI010,Cistern
+BI020,Dam/Weir
+BI030,Lock 
+BI031,Lock Basin
+BI039,Sluice
+BI040,Sluice Gate 
+BI041,Gate (Nautical) 
+BI042,US-Caisson   UK-Dry Dock Gate
+BI043,Flood Barrage
+BI050,Water Intake Tower
+BI060,Fish Ladder
+BI070,Gauging Station
+BI080,Boat Turning Basin
+BJ020,Moraine  
+BJ030,Glacier
+BJ040,Ice Cliff 
+BJ060,Ice Peak/Nunatak
+BJ065,Ice Shelf 
+BJ070,Pack Ice
+BJ080,Polar Ice
+BJ100,Snow Field/Ice Field
+BJ110,Tundra 
+BK010,Acoustic Station
+BK020,Magnetic Station
+BK030,Oceanographic Collection Device
+CA010,Contour Line (Land) 
+CA020,Ridge Line
+CA025,Valley Bottom Line
+CA026,Breakline
+CA030,Spot Elevation 
+CA035,Inland Water Elevation
+CA040,Contour Polygon (Land)
+DA005,Asphalt Lake
+DA006,Alkali Flats
+DA010,Ground Surface Element
+DA020,Barren Ground
+DA030,Land Area
+DA031,Land Region
+DB010,Bluff/Cliff/Escarpment
+DB030,Cave
+DB031,Hill
+DB060,Crevice/Crevasse
+DB070,Cut
+DB080,Depression
+DB090,Embankment/Fill
+DB100,Esker
+DB110,Fault
+DB115,Geothermal Feature
+DB145,Miscellaneous Obstacle
+DB150,Mountain Pass
+DB160,Rock Strata/Rock Formation
+DB161,"Large Isolated Rock, Boulder, or Rocky Formation"
+DB170,Sand Dune/Sand Hills
+DB176,Slope Category
+DB180,Volcano
+DB190,Volcanic Dike
+DB200,US-Gully/Gorge  UK-Gullies
+DB210,US-Potential Landslide Area   UK-Landslide/Scree
+DB211,Landslide
+DB220,Undermined Land
+DB230,Fan
+DB500,Bottomline of Cliff
+DB501,Topline of cliff
+EA010,Cropland
+EA020,Hedgerow
+EA030,Nursery
+EA031,Botanical Garden
+EA040,Orchard/Plantation
+EA050,Vineyards
+EA055,Hops
+EB010,Grassland
+EB015,Grass/Scrub/Brush
+EB020,Scrub/Brush/Bush
+EB030,Land Use/Land Cover (Vegetation)
+EC010,Bamboo/Cane
+EC015,Forest
+EC020,Oasis
+EC030,Trees
+EC040,US-Cleared Way/Cut Line/Firebreak  UK-Cleared Way/Firebreak
+ED010,Marsh
+ED020,Swamp
+EE000,Miscellaneous Vegetation
+EE010,Logging Area
+EE020,Land devoid of vegetation
+FA000,Administrative Boundary
+FA001,Administrative Area
+FA005,Access Zone
+FA015,Firing Range/Gunnery Range
+FA020,Armistice Line 
+FA030,Cease-Fire Line 
+FA040,Claim Line 
+FA041,Contact Zone
+FA050,Mandate Line/Convention Line
+FA060,Defacto Boundary
+FA070,Demilitarized Zone 
+FA080,National Park
+FA081,Nature Reserve
+FA082,"Protected Water, Gathering Ground"
+FA090,Geophysical Prospecting Grid  
+FA100,Test Area
+FA110,International Date Line 
+FA165,Training Area
+FA170,Zone of Occupation 
+FBXXX,Feature Place Holder FB
+FC021,Maritime Limit Boundary
+FC031,Maritime Area 
+FC035,Pond Partition
+FC036,Restricted Area 
+FC040,Traffic Separation Scheme System
+FC041,Traffic Separation Scheme (TSS) 
+FC100,Measured Distance Line 
+FC101,Theodolite Line
+FC102,Range Centerline
+FC130,Radar Reference Line 
+FC165,Route (Maritime) 
+FC166,Deep Water Route
+FC167,Defined Water
+FC168,Canal Route
+FC170,Safety Fairway 
+FC177,Swept Area 
+GA005,Airspace 
+GA010,ATS Route Segment/Leg 
+GA015,Special Use Airspace
+GA020,Airspace Boundary Segment 
+GA025,Special Use Airspace Segment
+GA030,Off Route Radial/Bearing 
+GA031,Lead Radial
+GA035,NAVAIDS (Aeronautical)
+GA045,Route (Air) 
+GA047,Complex Terminal Route
+GA048,ILS Component
+GA049,ILS Terminal Segment
+GA055,Waypoint/Reporting-Calling In Point
+GA065,Air Warning Light
+GA070,Primary Surface
+GA071,Approach Surface
+GA072,Primary Approach Transitional Surface (7:1)
+GA073,Inner Horizontal Surface
+GA074,Conical Surface (20:1)
+GA075,Outer Horizontal Surface
+GA076,Conical Outer Horizontal Transitional Surface (7:1)
+GB005,US-Airport/Airfield  UK-Airport/Airfield/Airstrip
+GB006,US-Airfield  UK-Airstrip
+GB007,Airport Area
+GB010,Airport Lighting 
+GB015,US-Apron/Hardstand  UK-Apron/Hardstanding
+GB020,Arresting Gear 
+GB025,Blast Barrier
+GB030,Helicopter Landing Pad       
+GB035,Heliport 
+GB040,Launch Pad
+GB045,Overrun/Stopway
+GB046,Touchdown Zone
+GB050,Revetment (Airfield/Equipment/Facilities )
+GB055,Runway 
+GB056,Runway Endpoint
+GB057,Shoulder
+GB058,Point Abeam
+GB059,Airfield Elevation Point
+GB060,Runway Radar Reflector 
+GB065,Seaplane Base  
+GB070,Seaplane Landing/Seaplane Take-Off Area
+GB075,Taxiway 
+GB080,US-Wind Indicator   UK-Wind Indicator/Wind Sock
+GB090,Displaced Threshold
+GB160,Decontamination Pad
+GB170,INS Alignment Pad 
+GB220,Air Obstruction
+GB221,Miscellaneous Air Obstruction
+IA010,Map Boundary
+IA040,Parcel
+IA050,Cadastral Constructions
+ID010,Cadastral Control Points
+ID020,Fiducial Points
+IE010,Map Sheet Frame 
+IE020,Miscellaneous
+IE040,Map-Info
+SA010,Common Open Water
+SA020,Disturbed Soil
+SA030,Exposed Bedrock
+SA040,Permanent Snowfield
+SA050,Slope Polygon 
+SA060,Covered Drainage
+SBXXX,Feature Place Holder SB
+SCXXX,Feature Place Holder SC
+SDXXX,Feature Place Holder SD
+SEXXX,Feature Place Holder SE
+SFXXX,Feature Place Holder SF
+SU001,Military Base
+SU002,US-Subway   UK-Underground Railway/Metro
+SU003,Port Facility
+ZAXXX,Feature Place Holder ZA
+ZB020,Benchmark
+ZB030,US-Boundary Monument  UK-Boundary Monument/Boundary Mark
+ZB031,Unmonumented Point
+ZB035,Control Point/Control Station
+ZB036,Distance Mark
+ZB040,Diagnostic Point
+ZB060,Geodetic Point
+ZC040,US-Magnetic Disturbance Area  UK-Local Magnetic Anomaly
+ZC050,Isogonic Lines
+ZC051,Magnetic Pole
+ZD001,Network
+ZD003,Artifact Location
+ZD012,Geographic Information Point
+ZD015,Point of Change
+ZD020,Void Collection Area 
+ZD040,Named Location 
+ZD045,Text Description 
+ZEXXX,Feature Place Holder ZE
