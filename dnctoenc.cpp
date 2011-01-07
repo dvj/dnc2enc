@@ -1,15 +1,15 @@
-#include "mys57.h"
 #include "ogrsf_frmts.h"
 #include "buildtables.h"
+#include "geohandler.h"
 
 using namespace std;
 
 
-int gID = 10;
+int fID = 20000;
 int ENCLayerNum = 0;
    
 void ShowLayerDebugInfo(OGRLayer *layer) {
-    printf("Reading Layer %s of type %s\n",layer->GetName(), OGRGeometryTypeToName(layer->GetGeomType()));
+    printf("Reading Layer %s of type %s\n",layer->GetLayerDefn()->GetName(), OGRGeometryTypeToName(layer->GetLayerDefn()->GetGeomType()));
     OGRFeatureDefn *poFDefn = layer->GetLayerDefn();
     printf("Layer Def: %s\n",poFDefn->GetName());    
     
@@ -21,176 +21,66 @@ void ShowLayerDebugInfo(OGRLayer *layer) {
     }
 }
 
-int MakeConnectedNode(OGRPoint *p, OGRDataSource *data) {
-     OGRLayer *encLayer =  data->GetLayer(1);
-     OGRFeature *poFeature =OGRFeature::CreateFeature(encLayer->GetLayerDefn());
-     poFeature->SetField(poFeature->GetFieldIndex("RCNM"),RCNM_VC);
-     poFeature->SetGeometry(p);
-     poFeature->SetField(poFeature->GetFieldIndex("RUIN"),1);
-     poFeature->SetField(poFeature->GetFieldIndex("RCID"),gID++);
-     if( encLayer->CreateFeature( poFeature ) != OGRERR_NONE )
-     {
-         printf( "Failed to create feature in shapefile.\n" );
-         return -1;
-     }
-     return gID-1;
-}
-
-int HandleGeometry(OGRFeature *poFeature, OGRDataSource *poOUT) {
-    int madeGeoType = 0;
-    OGRGeometry *poGeometry;
-    poGeometry = poFeature->GetGeometryRef();
-    if( poGeometry == NULL) {
-        return 0;
-    }
-    // double x,y;
-    OGRFeature *poFeatureO = NULL;
-    OGRLayer *encLayer;
-    //OGRFeatureDefn * fd = new OGRFeatureDefn("IsolatedNode");
-
-    if (wkbFlatten(poGeometry->getGeometryType()) == wkbPoint ) {
-        encLayer = poOUT->GetLayer(0);
-        printf("Making POINT, %s\n", encLayer->GetName());
-        poFeatureO = OGRFeature::CreateFeature(encLayer->GetLayerDefn());            
-        poFeatureO->SetField(poFeatureO->GetFieldIndex("RCNM"),RCNM_VI);
-        madeGeoType = RCNM_VI;
-    } else if (wkbFlatten(poGeometry->getGeometryType()) == wkbLineString ) {
-        OGRLineString *line = (OGRLineString *)poGeometry;
-        printf("Making LINESTRING\n");
-        madeGeoType = RCNM_VE;
-        OGRPoint *startPoint = new OGRPoint();
-        line->StartPoint(startPoint); 
-        OGRPoint *endPoint = new OGRPoint();
-        line->EndPoint(endPoint); 
-        int startNode = MakeConnectedNode(startPoint, poOUT);
-        int endNode = MakeConnectedNode(endPoint, poOUT);
-        encLayer = poOUT->GetLayer(2);
-        poFeatureO = OGRFeature::CreateFeature(encLayer->GetLayerDefn());                
-        poFeatureO->SetField(poFeatureO->GetFieldIndex("RCNM"),madeGeoType);
-        poFeatureO->SetField(poFeatureO->GetFieldIndex("NAME_RCNM_0"),RCNM_VC);
-        poFeatureO->SetField(poFeatureO->GetFieldIndex("NAME_RCID_0"),startNode);
-        poFeatureO->SetField(poFeatureO->GetFieldIndex("NAME_RCNM_1"),RCNM_VC);
-        poFeatureO->SetField(poFeatureO->GetFieldIndex("NAME_RCID_1"),endNode);
-        poFeatureO->SetField(poFeatureO->GetFieldIndex("ORNT_0"),255);
-        poFeatureO->SetField(poFeatureO->GetFieldIndex("USAG_0"),255);
-        poFeatureO->SetField(poFeatureO->GetFieldIndex("TOPI_0"),1);
-        poFeatureO->SetField(poFeatureO->GetFieldIndex("MASK_0"),255);
-        
-    } else if (wkbFlatten(poGeometry->getGeometryType()) == wkbPolygon) {
-        printf("Making POLYGON\n");
-        OGRPolygon *poly = (OGRPolygon *) poGeometry;
-        OGRLineString *line = (OGRLineString *) poly->getExteriorRing();
-       
-        OGRPoint *startPoint = new OGRPoint();
-        line->StartPoint(startPoint); 
-        /*OGRPoint *endPoint = new OGRPoint();
-        line->EndPoint(endPoint); 
-        */
-        int startNode = MakeConnectedNode(startPoint, poOUT);
-        //int endNode = MakeConnectedNode(endPoint, poOUT);
-        
-        encLayer = poOUT->GetLayer(2);
-        poFeatureO = OGRFeature::CreateFeature(encLayer->GetLayerDefn());            
-        //poFeatureO->SetField(poFeatureO->GetFieldIndex("PRIM"),3);
-        poFeatureO->SetField(poFeatureO->GetFieldIndex("RCNM"),RCNM_VE);
-        poFeatureO->SetField(poFeatureO->GetFieldIndex("NAME_RCNM_0"),RCNM_VC);
-        poFeatureO->SetField(poFeatureO->GetFieldIndex("NAME_RCID_0"),startNode);
-        poFeatureO->SetField(poFeatureO->GetFieldIndex("NAME_RCNM_1"),RCNM_VC);
-        poFeatureO->SetField(poFeatureO->GetFieldIndex("NAME_RCID_1"),startNode);
-        poFeatureO->SetField(poFeatureO->GetFieldIndex("ORNT_0"),255);
-        poFeatureO->SetField(poFeatureO->GetFieldIndex("USAG_0"),255);
-        poFeatureO->SetField(poFeatureO->GetFieldIndex("TOPI_0"),1);
-        poFeatureO->SetField(poFeatureO->GetFieldIndex("MASK_0"),255);
-        
-        poGeometry = line;
-        madeGeoType = RCNM_VE;   
-    } else if (wkbFlatten(poGeometry->getGeometryType()) == wkbMultiPoint) {
-        printf("Making MULTIPOINT\n");
-        encLayer = poOUT->GetLayer(0);
-        poFeatureO->SetField(poFeatureO->GetFieldIndex("RCNM"),RCNM_VI);
-        poFeatureO = OGRFeature::CreateFeature(encLayer->GetLayerDefn());            
-        //poFeatureO->SetField(poFeatureO->GetFieldIndex("PRIM"),1);
-        madeGeoType = RCNM_VI;
-    } else {
-        printf("OTHER GEOMETRY OF TYPE %d\n",poGeometry->getGeometryType());
-        encLayer = poOUT->GetLayer(0);
-        poFeatureO = OGRFeature::CreateFeature(encLayer->GetLayerDefn());            
-        //poFeatureO->SetField(poFeatureO->GetFieldIndex("PRIM"),4);
-        madeGeoType = RCNM_VI;
-    }
-    poFeatureO->SetGeometry( poGeometry );
-    //poFeatureO->SetField(poFeatureO->GetFieldIndex("OBJL"),ENCLayerNum);
-    //poFeatureO->SetField(poFeatureO->GetFieldIndex("GRUP"),0); //FIXME - this should be 0 or 2
-    //poFeatureO->SetField(poFeatureO->GetFieldIndex("RVER"),1);
-    poFeatureO->SetField(poFeatureO->GetFieldIndex("RUIN"),1);
-    //poFeatureO->SetField(poFeatureO->GetFieldIndex("AGEN"),40); //FIXME - find a good agency
-    //poFeatureO->SetField(poFeatureO->GetFieldIndex("RCID"),poFeature->GetFieldAsInteger(poFeature->GetFieldIndex("id")));
-    poFeatureO->SetField(poFeatureO->GetFieldIndex("RCID"),gID++);
-    if( encLayer->CreateFeature( poFeatureO ) != OGRERR_NONE )
-    {
-        printf( "Failed to create feature in shapefile.\n" );
-        return 0;
-    }
-    // poFeatureO->DumpReadable(0,0);
-    OGRFeature::DestroyFeature(poFeatureO);
-    return madeGeoType;
-}
 
 
-int main(int argc, char **argv)
-
-{
-    map<string,int> lookuptable;
-    BuildTables(&lookuptable);
-    // const char *pszDriverName = "ESRI Shapefile";
-     const char *pszDriverName = "S57";
-    OGRSFDriver *poDriver;
-
+OGRDataSource* openInputFile(char *input) {
     OGRRegisterAll();
-
-    OGRDataSource       *poDS;
-    printf("Opening %s\n",argv[1]);
-    poDS = OGRSFDriverRegistrar::Open( argv[1], FALSE );
+    OGRDataSource  *poDS;
+    printf("Opening %s\n",input);
+    poDS = OGRSFDriverRegistrar::Open( input, FALSE );
     if( poDS == NULL )
     {
         printf( "Open failed.\n" );
         exit( 1 );
     }
-    
-    //now setup the writter
-    poDriver = OGRSFDriverRegistrar::GetRegistrar()->GetDriverByName(
-                pszDriverName );
-    if( poDriver == NULL )
-    {
+    return poDS;
+}
+
+OGRDataSource *openOutputFile(char *output) {
+    const char *pszDriverName = "S57";
+    OGRSFDriver *poDriver;
+    poDriver = OGRSFDriverRegistrar::GetRegistrar()->GetDriverByName(pszDriverName );
+    if( poDriver == NULL ) {
         printf( "%s driver not available.\n", pszDriverName );
         exit( 1 );
     }
-    OGRDataSource *poOUT = poDriver->CreateDataSource( "testENC.000", NULL );
-    if( poDS == NULL )
-    {
+    OGRDataSource *poOUT = poDriver->CreateDataSource( output, NULL );
+    if( poOUT == NULL ) {
         printf( "Creation of output file failed.\n" );
         exit( 1 );
-    }    
-    OGRLayer  *poLayer;
+    }
+    return poOUT;
+}
+
+int main(int argc, char **argv) {
+    map<string,int> lookuptable;
+    BuildTables(&lookuptable);
+    OGRDataSource  *poDS = openInputFile(argv[1]);
+    OGRDataSource *poOUT = openOutputFile(argv[2]);
+
+    OGRLayer *poLayer;
     OGRLayer *encLayer = NULL;
+
     OGRFeature **poFeatureList = new OGRFeature*[20000];
-    int f =0;
+    
+    GeoHandler *geoHandler = new GeoHandler(poOUT);
+    int f = 0;
+
     int layers = poDS->GetLayerCount();
-    layers = 50; //FIXME - remove this (stops random segfault)
-    for (int layer = 0 ; layer< layers; layer++) {
-        
+    // layers = 50; //FIXME - remove this (stops random segfault)
+    for (int layer = 0 ; layer< layers; layer++) {        
         poLayer = poDS->GetLayer(layer);
         if (poLayer == NULL || poLayer->GetFeatureCount() == 0) continue;
                 
         OGRFeature *poFeature;
         poLayer->ResetReading();
-        //poLayerO = poOUT->GetLayerByName(poLayer->GetName());
         
         while( (poFeature = poLayer->GetNextFeature()) != NULL )
         {
             OGRGeometry *poGeometry;
             poGeometry = poFeature->GetGeometryRef();
             if( poGeometry == NULL) {
+                printf("Non-geometry on layer %s\n", poLayer->GetLayerDefn()->GetName());
                 //TODO - do something with the non-geometry
                 continue;
             }
@@ -202,6 +92,15 @@ int main(int argc, char **argv)
             if (poFeature->GetFieldIndex("f_code") != -1) {
                 f_code = poFeature->GetFieldAsString(poFeature->GetFieldIndex("f_code"));
                 strcpy(sLookup,f_code);
+            } else {
+                printf("No f_code\n");
+                strcpy(sLookup,"");
+                for(int iField = 0; iField < poFeature->GetFieldCount(); iField++ )
+                {
+                    OGRFieldDefn *poFieldDefn = poFeature->GetFieldDefnRef( iField );
+                    if (!poFeature->IsFieldSet(iField)) continue;
+                    printf("  %s: %s\n",poFieldDefn->GetNameRef(),poFeature->GetFieldAsString(iField));
+                }
             }
             if (wkbFlatten(poGeometry->getGeometryType()) == wkbPoint || 
                 wkbFlatten(poGeometry->getGeometryType()) == wkbMultiPoint) {
@@ -217,26 +116,23 @@ int main(int argc, char **argv)
              
             ENCLayerNum = lookuptable[sLookup];
             if (ENCLayerNum == 0  || ENCLayerNum == -1) {
-                printf("No available layer for %s, %s\n",poLayer->GetName(), sLookup);
+                printf("No available layer for %s, %s\n",poLayer->GetLayerDefn()->GetName(), sLookup);
                 continue;
             }
-            if (gID == 530) {
-                printf("RECORD 530\n");
-                poFeature->DumpReadable(0,0);
-            }
+            
             encLayer = poOUT->GetLayer(ENCLayerNum+3);
             //printf("Using ENCLayer %s for DNC Layer %s\n",encLayer->GetName(), poLayer->GetName());
             //poFeature->DumpReadable(0,0);
 
             int madeGeo = 0;
-            madeGeo = HandleGeometry(poFeature, poOUT);
+            madeGeo = geoHandler->HandleGeometry(poFeature);
 
             OGRFeature *poFeatureO;
             
             //poFeatureList[f] = OGRFeature::CreateFeature( encLayer->GetLayerDefn() );
             poFeatureList[f] = new OGRFeature(encLayer->GetLayerDefn());
             poFeatureO = poFeatureList[f];
-            poFeatureO->SetField(poFeatureO->GetFieldIndex("RCID"),20000+gID++);
+            poFeatureO->SetField(poFeatureO->GetFieldIndex("RCID"),fID++);
             
             poFeatureO->SetField(poFeatureO->GetFieldIndex("PRIM"),geometryType);
             
@@ -259,7 +155,7 @@ int main(int argc, char **argv)
                 int *gl = new int[1];
                 gl[0] = madeGeo;
                 poFeatureO->SetField(poFeatureO->GetFieldIndex("NAME_RCNM"),1,gl);
-                gl[0] = gID-2;
+                gl[0] = geoHandler->GetGID()-1;
                 poFeatureO->SetField(poFeatureO->GetFieldIndex("NAME_RCID"),1,gl);
                 gl[0] = 1;
                 poFeatureO->SetField(poFeatureO->GetFieldIndex("ORNT"),1,gl);
@@ -319,7 +215,6 @@ int main(int argc, char **argv)
         }
        
     }
-    printf("gID: %d\n",gID);
     OGRFeature *poFeatureO;
         
         for (int i=0;i<f;i++) {
