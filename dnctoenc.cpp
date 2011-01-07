@@ -52,20 +52,17 @@ OGRDataSource *openOutputFile(char *output) {
     return poOUT;
 }
 
-int main(int argc, char **argv) {
-    map<string,int> lookuptable;
-    BuildTables(&lookuptable);
-    OGRDataSource  *poDS = openInputFile(argv[1]);
-    OGRDataSource *poOUT = openOutputFile(argv[2]);
-
+int ProcessFeatures(OGRDataSource *poDS, OGRDataSource *poOUT) {
+    
     OGRLayer *poLayer;
     OGRLayer *encLayer = NULL;
-
     OGRFeature **poFeatureList = new OGRFeature*[20000];
-    
-    GeoHandler *geoHandler = new GeoHandler(poOUT);
-    int f = 0;
 
+    int f = 0;    
+    map<string,int> lookuptable;
+    BuildTables(&lookuptable);
+    GeoHandler *geoHandler = new GeoHandler(poOUT);
+        
     int layers = poDS->GetLayerCount();
     // layers = 50; //FIXME - remove this (stops random segfault)
     for (int layer = 0 ; layer< layers; layer++) {        
@@ -93,14 +90,17 @@ int main(int argc, char **argv) {
                 f_code = poFeature->GetFieldAsString(poFeature->GetFieldIndex("f_code"));
                 strcpy(sLookup,f_code);
             } else {
-                printf("No f_code\n");
+                //printf("No f_code\n");
                 strcpy(sLookup,"");
+                //TODO - Do something useful with these layers
+                /*
                 for(int iField = 0; iField < poFeature->GetFieldCount(); iField++ )
                 {
                     OGRFieldDefn *poFieldDefn = poFeature->GetFieldDefnRef( iField );
                     if (!poFeature->IsFieldSet(iField)) continue;
                     printf("  %s: %s\n",poFieldDefn->GetNameRef(),poFeature->GetFieldAsString(iField));
                 }
+                */
             }
             if (wkbFlatten(poGeometry->getGeometryType()) == wkbPoint || 
                 wkbFlatten(poGeometry->getGeometryType()) == wkbMultiPoint) {
@@ -116,7 +116,7 @@ int main(int argc, char **argv) {
              
             ENCLayerNum = lookuptable[sLookup];
             if (ENCLayerNum == 0  || ENCLayerNum == -1) {
-                printf("No available layer for %s, %s\n",poLayer->GetLayerDefn()->GetName(), sLookup);
+                //printf("No available layer for %s, %s\n",poLayer->GetLayerDefn()->GetName(), sLookup);
                 continue;
             }
             
@@ -165,6 +165,9 @@ int main(int argc, char **argv) {
                 poFeatureO->SetField(poFeatureO->GetFieldIndex("MASK"),1,gl);
                 
                 //poFeatureO->SetField(poFeatureO->GetFieldIndex("LNAM_REFS"),
+            }
+            if (poFeature->GetFieldIndex("nam") != -1 && poFeatureO->GetFieldIndex("OBJNAM") != -1) {
+                poFeatureO->SetField(poFeatureO->GetFieldIndex("OBJNAM"), poFeature->GetFieldAsString(poFeature->GetFieldIndex("nam")));
             }
             /*
               for(int iField = 0; iField < poFeature->GetFieldCount(); iField++ )
@@ -217,17 +220,30 @@ int main(int argc, char **argv) {
     }
     OGRFeature *poFeatureO;
         
-        for (int i=0;i<f;i++) {
-            poFeatureO = poFeatureList[i];
-            //poFeatureO->DumpReadable(0,0);
-            encLayer = poOUT->GetLayer(poFeatureO->GetFieldAsInteger("OBJL")+3);
-            if( encLayer->CreateFeature( poFeatureO ) != OGRERR_NONE )
-            {
-                printf( "Failed to create feature in shapefile.\n" );   
-            }
-            //OGRFeature::DestroyFeature( poFeatureO );
+    for (int i=0;i<f;i++) {
+        poFeatureO = poFeatureList[i];
+        //poFeatureO->DumpReadable(0,0);
+        encLayer = poOUT->GetLayer(poFeatureO->GetFieldAsInteger("OBJL")+3);
+        if( encLayer->CreateFeature( poFeatureO ) != OGRERR_NONE )
+        {
+            printf( "Failed to create feature in shapefile.\n" );   
         }
-    printf("Done, exiting \n");
+        //OGRFeature::DestroyFeature( poFeatureO );
+    }
+    return 0;
+}
+
+int main(int argc, char **argv) {
+    OGRDataSource  *poDS = openInputFile(argv[1]);
+    OGRDataSource *poOUT = openOutputFile(argv[2]);
+
+    
+    GeoHandler *geoHandler = new GeoHandler(poOUT);
+    
+    geoHandler->ReadGeometry();
+
+    ProcessFeatures(poDS, poOUT);
+
     OGRDataSource::DestroyDataSource( poOUT );
     OGRDataSource::DestroyDataSource( poDS );
     

@@ -14,9 +14,43 @@ GeoHandler::~GeoHandler() {
 }
 
 
+int GeoHandler::ProcessFeature(OGRFeature *feature) {
+    OGRGeometry *fgeo = feature->GetGeometryRef();
+    OGRwkbGeometryType geoType = fgeo->getGeometryType();
+        
+    if (geoType == wkbPoint) {
+        OGRPoint *ogrpt = (OGRPoint *) fgeo;
+        GeoPoint *p = new GeoPoint(ogrpt->getX(),ogrpt->getY(), IsolatedPoint);
+        p->SetOGRPointReference(ogrpt);
+        pointList.push_back(p);
+    } else if (geoType == wkbMultiPoint) {
+
+    } else if (geoType == wkbLineString) {
+
+    } else if (geoType ==  wkbPolygon) {
+
+    } else {
+        fprintf(stderr, "Unhandled Geometry in ProcessFeature\n");
+        return(-1);
+    }
+
+    return 0;
+}
+
 int GeoHandler::ReadGeometry() {
-
-
+    int layers = _dataSource->GetLayerCount();
+    OGRLayer *layer;
+    for (int l = 0 ; l< layers; l++) {        
+        layer = _dataSource->GetLayer(l);
+        if (layer == NULL || layer->GetFeatureCount() == 0) continue;
+        
+        OGRFeature *feature;
+        layer->ResetReading();
+        int status = 0;
+        while( (feature = layer->GetNextFeature()) != NULL ) {
+            status = ProcessFeature(feature); //TODO - check status
+        }
+    }
     return 0;
 }
 
@@ -67,7 +101,17 @@ int GeoHandler::HandleGeometry(OGRFeature *poFeature) {
         */
         int startNode = MakeConnectedNode(startPoint);
         //int endNode = MakeConnectedNode(endPoint);
-        
+       
+        int rings = poly->getNumInteriorRings();
+        //TODO - something intelligent with the rings
+        /*
+        if (rings > 0) {
+            printf("Found %d interior rings\n",rings);
+            for (int r = 0;r<rings;r++) {
+                OGRLinearRing *ring = poly->getInteriorRing(r);
+                printf("  Ring %d is wound: %d, has %d nodes\n",r,ring->isClockwise(), ring->getNumPoints());
+            }
+            }*/
         encLayer = _dataSource->GetLayer(2);
         poFeatureO = OGRFeature::CreateFeature(encLayer->GetLayerDefn());            
         poFeatureO->SetField(poFeatureO->GetFieldIndex("RCNM"),RCNM_VE);
@@ -79,7 +123,10 @@ int GeoHandler::HandleGeometry(OGRFeature *poFeature) {
         poFeatureO->SetField(poFeatureO->GetFieldIndex("USAG_0"),255);
         poFeatureO->SetField(poFeatureO->GetFieldIndex("TOPI_0"),1);
         poFeatureO->SetField(poFeatureO->GetFieldIndex("MASK_0"),255);
-        
+        poFeatureO->SetField(poFeatureO->GetFieldIndex("ORNT_1"),255);
+        poFeatureO->SetField(poFeatureO->GetFieldIndex("USAG_1"),255);
+        poFeatureO->SetField(poFeatureO->GetFieldIndex("TOPI_1"),2);
+        poFeatureO->SetField(poFeatureO->GetFieldIndex("MASK_1"),255);        
         poGeometry = line;
         madeGeoType = RCNM_VE;   
     } else if (wkbFlatten(poGeometry->getGeometryType()) == wkbMultiPoint) {
