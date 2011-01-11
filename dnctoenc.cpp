@@ -238,11 +238,11 @@ int main(int argc, char **argv) {
     OGRDataSource *poOUT = openOutputFile(argv[2]);
 
     
-    GeoHandler *geoHandler = new GeoHandler(poOUT);
+    GeoHandler *geoHandler = new GeoHandler(poDS);
     
     geoHandler->ReadGeometry();
 
-    ProcessFeatures(poDS, poOUT);
+    //ProcessFeatures(poDS, poOUT);
 
     OGRDataSource::DestroyDataSource( poOUT );
     OGRDataSource::DestroyDataSource( poDS );

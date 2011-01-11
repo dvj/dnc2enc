@@ -6,6 +6,7 @@
 #include "geopoint.h"
 #include "geosegment.h"
 
+namespace std { using namespace __gnu_cxx; }
 
 class GeoHandler {
 public:
@@ -14,15 +15,22 @@ public:
     int MakeConnectedNode(OGRPoint *p);
     int HandleGeometry(OGRFeature *poFeature);
     int ReadGeometry();
-    int ProcessFeature(OGRFeature *);
+    GeoRef* ProcessFeature(OGRFeature *);
     int GetGID();
+    int LookupPoint(const GeoPoint *p);
+    GeoPoint* CreatePoint(OGRPoint *, PointType, GeoRef *);
+    int AddLineString(const OGRLineString *ls, GeoSegment *, GeoRef *);
     vector<GeoRef *> GetGeoReferences(OGRGeometry *geometry);
     
 private:
     OGRDataSource *_dataSource;
     int _gID;
-    vector<GeoPoint *> pointList;
-    vector<GeoRef *> refList;
+    //GeoPoint ** _pointList;
+    int _pointListSize;
+    int _pointListAllocSize;
+    vector<GeoPoint *> _pointList;
+    vector<GeoRef *> _refList;
+    double _tolerance;
 };
 
 
