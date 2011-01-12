@@ -2,7 +2,8 @@
 
 #include "geosegment.h"
 
-GeoSegment::GeoSegment() {
+GeoSegment::GeoSegment(int id) {
+    _segmentID = id;
     _startPoint = NULL;
     _endPoint = NULL;
 }
@@ -41,9 +42,9 @@ bool GeoSegment::Split(int index, GeoSegment *out) {
 void GeoSegment::AddPoint(GeoPoint *gp, GeoRef *gr) {
     _points.push_back(gp);
     _references.push_back(gr);
-    if (gp->type != EdgePoint) { 
+    /* if (gp->type != EdgePoint) { 
         fprintf(stderr,"Adding non-edge point to GeoSegment list\n");
-    }
+        }*/
 }
 
 void GeoSegment::AddStartPoint(GeoPoint *gp, GeoRef *gr) {

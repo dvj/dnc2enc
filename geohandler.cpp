@@ -4,7 +4,8 @@
 #include "georef.h"
 #include "mys57.h"
 GeoHandler::GeoHandler(OGRDataSource *dat) {
-    _gID = 0;
+    _globalFeatureID = 0;
+    _globalSegmentID = 0;
     _dataSource = dat;
     _tolerance = .00001;
     _pointListAllocSize = 400000;
@@ -77,7 +78,7 @@ int GeoHandler::AddLineString(const OGRLineString *ls, GeoSegment *gs, GeoRef *g
 GeoRef* GeoHandler::ProcessFeature(OGRFeature *feature) {
     OGRGeometry *fgeo = feature->GetGeometryRef();
     OGRwkbGeometryType geoType = fgeo->getGeometryType();
-    int featureID = _gID;//feature->GetFieldAsInteger(feature->GetFieldIndex("id"));
+    int featureID = _globalFeatureID;//feature->GetFieldAsInteger(feature->GetFieldIndex("id"));
 
     // Dont need point or multipoint, becasue they will always be isolated
     if (geoType == wkbPoint) {
@@ -93,7 +94,7 @@ GeoRef* GeoHandler::ProcessFeature(OGRFeature *feature) {
     } else if (geoType == wkbLineString) {
         GeoRef *gr = new GeoRef(featureID); 
         OGRLineString *ls = (OGRLineString *) fgeo;
-        GeoSegment *gs = new GeoSegment();
+        GeoSegment *gs = new GeoSegment(_globalSegmentID++);
         AddLineString(ls, gs, gr);
         gr->AddSegment(gs,-1);
         _refList.push_back(gr);
@@ -103,7 +104,7 @@ GeoRef* GeoHandler::ProcessFeature(OGRFeature *feature) {
         OGRPolygon *poly = (OGRPolygon *)fgeo;
         poly->closeRings();
         OGRLinearRing *ogrRing;
-        GeoSegment *gs = new GeoSegment();
+        GeoSegment *gs = new GeoSegment(_globalSegmentID++);
         ogrRing = (OGRLinearRing *)poly->getExteriorRing();
         AddLineString((OGRLineString *)ogrRing,gs, gr);
         int cw = 0;
@@ -111,7 +112,7 @@ GeoRef* GeoHandler::ProcessFeature(OGRFeature *feature) {
         gr->AddSegment(gs,cw);
         int iRings = poly->getNumInteriorRings();
         for (int i = 0 ; i < iRings ; i++ ) {
-            gs = new GeoSegment();
+            gs = new GeoSegment(_globalSegmentID++);
             ogrRing = (OGRLinearRing *)poly->getInteriorRing(i);
             AddLineString((OGRLineString *)ogrRing,gs, gr);
             if (ogrRing->isClockwise()) cw = 0; else cw = 1;
@@ -137,41 +138,10 @@ int GeoHandler::ReadGeometry() {
         OGRFeature *feature;
         layer->ResetReading();
         while( (feature = layer->GetNextFeature()) != NULL ) {
-            _gID++;
+            _globalFeatureID++;
             ProcessFeature(feature);
         }
     }
-
-    /* 
-    for (unsigned i = 0 ; i < _refList.size() ; i++ ) {
-        GeoRef *gr = _refList[i];
-        for (int j = 0 ; j < gr->GetNumSegments(); j++) {
-            GeoSegmentWinding *gsw = gr->GetSegmentWinding(j);
-            GeoSegment *gs = gsw->GetSegment();
-            vector<int> *ownerIDs = new vector<int>[gs->GetNumPoints()];
-            for (int p = 0 ; p < gs->GetNumPoints(); p++) {
-                const GeoPoint *gp = gs->GetPoint(p);
-                
-                if (gp->IsDeleted()) printf("*");
-                else if (gp->type == ConnectedPoint) printf("+");
-                else printf(" ");
-                //int idx = LookupPoint(gp);
-                // printf("Found %.5lf at index %d (%.5lf)\n",gp->_p.x, idx, _pointList[idx]->_p.x);
-                printf("%d %x %d (%.5lf %.5lf):",gs->GetRef(0)->GetID(), gp, gsw->GetWindingDir(), gp->_p.x, gp->_p.y);
-                for (int owner=0; owner < gp->NumOwners(); owner++) {
-                    ownerIDs[p].push_back(gp->GetOwner(owner)->GetID());
-                    printf("%d ",gp->GetOwner(owner)->GetID());
-                }
-              
-                printf("\n");
-            }
-            printf("---------\n");
-        }
-    }
-    */
-
-
-
 
     printf("Reflist.size: %d\n",(int) _refList.size());
     printf("PointList.size: %d\n",(int)_pointList.size());
@@ -188,10 +158,7 @@ int GeoHandler::ReadGeometry() {
     list<GeoPoint *> plist;
     int dbgRefCount = 0;
     int dbgSize = _pointList.size();
-    for (int i = 0 ; i < _pointList.size(); i++ ) {
-        plist.push_back(_pointList[i]);
-        dbgRefCount += _pointList[i]->NumOwners();
-    }
+    plist.assign(_pointList.begin(),_pointList.end());
     //go through entire list and merge like points.
     list<GeoPoint *>::iterator idx;
     for (list<GeoPoint *>::iterator i = plist.begin() ; i != plist.end(); i++ ) {
@@ -207,15 +174,10 @@ int GeoHandler::ReadGeometry() {
             }
         }
     }
-/*
-    //  sort the owners for all points
-    for (int i = 0 ; i < _pointList.size(); i++ ) {
-        _pointList[i]->SortOwners();
-    }
-*/              
+          
     _pointList.clear();
     int dbgRefCount2 = 0;
-    //now copy the list back to the vector,
+    //now copy the list back to the vector, and sort the owners while we're at it
     for (list<GeoPoint *>::iterator i = plist.begin() ; i != plist.end(); i++ ) {
         _pointList.push_back(*i);
         (*i)->SortOwners();
@@ -233,50 +195,49 @@ int GeoHandler::ReadGeometry() {
             GeoSegmentWinding *gsw = gr->GetSegmentWinding(j);
             GeoSegment *gs = gsw->GetSegment();
             gs->FixPointReferences();
-            vector<int> *ownerIDs = new vector<int>[gs->GetNumPoints()];
             bool loss, gain;
-            for (int p = 0 ; p < gs->GetNumPoints(); p++) {
+            for (int p = 0 ; p < gs->GetNumPoints()-1; p++) {
                 const GeoPoint *gp = gs->GetPoint(p);
-                if (p != gs->GetNumPoints()-1) {
-                    const GeoPoint *gp2 = gs->GetPoint(p+1);
-                    gp->CompareOwners(gp2, loss, gain);
-                    if (loss) {
-                        GeoSegment* gs2 = new GeoSegment();
-                        if (gs->Split(p, gs2))
-                            gr->AddSegment(gs2, gsw->GetWindingDir());
-                    }
-                    if (gain) {
-                        GeoSegment* gs2 = new GeoSegment();
-                        if (gs->Split(p+1, gs2)) {
-                            gr->AddSegment(gs2, gsw->GetWindingDir());
-                        }
-                    }
-                } else {
-                    loss = gain = false;
+                const GeoPoint *gp2 = gs->GetPoint(p+1);
+                gp->CompareOwners(gp2, loss, gain);
+                if (loss && p > 0) {
+                    GeoSegment* gs2 = new GeoSegment(_globalSegmentID++);
+                    if (gs->Split(p, gs2))
+                        gr->AddSegment(gs2, gsw->GetWindingDir());
+                    else delete gs2;
                 }
-                    
-                /*
-                if (gp->IsDeleted()) printf("*");
-                else if (gp->type == ConnectedPoint) printf("+");
-                else printf(" ");
-                //int idx = LookupPoint(gp);
-                // printf("Found %.5lf at index %d (%.5lf)\n",gp->_p.x, idx, _pointList[idx]->_p.x);
-                printf("%d %x %d %d %d (%.5lf %.5lf):",gs->GetRef(0)->GetID(), gp, gsw->GetWindingDir(), loss, gain, gp->_p.x, gp->_p.y);
-                */
-                for (int owner=0; owner < gp->NumOwners(); owner++) {
-                    ownerIDs[p].push_back(gp->GetOwner(owner)->GetID());
-                    //printf("%d ",gp->GetOwner(owner)->GetID());
+                if (gain) {
+                    GeoSegment* gs2 = new GeoSegment(_globalSegmentID++);
+                    if (gs->Split(p+1, gs2)) {
+                        gr->AddSegment(gs2, gsw->GetWindingDir());
+                    } else delete gs2;
                 }
-              
-                //printf("\n");
             }
-            //printf("---------\n");
         }
     }
     
-
-     
+    // now go through the segments once more, and split on any interior connected points     
     for (unsigned i = 0 ; i < _refList.size() ; i++ ) {
+        GeoRef *gr = _refList[i];
+        for (int j = 0 ; j < gr->GetNumSegments(); j++) {
+            GeoSegmentWinding *gsw = gr->GetSegmentWinding(j);
+            GeoSegment *gs = gsw->GetSegment();
+            for (int p = 1 ; p < gs->GetNumPoints()-1; p++) {
+                const GeoPoint *gp = gs->GetPoint(p);
+                if (gp->type == ConnectedPoint) {
+                    GeoSegment *gs2 = new GeoSegment(_globalSegmentID++);
+                    if (gs->Split(p, gs2))
+                        gr->AddSegment(gs2, gsw->GetWindingDir());
+                    else delete gs2;
+                }
+            }
+        }
+    }
+    
+    
+
+    
+     for (unsigned i = 0 ; i < _refList.size() ; i++ ) {
         GeoRef *gr = _refList[i];
         for (int j = 0 ; j < gr->GetNumSegments(); j++) {
             GeoSegmentWinding *gsw = gr->GetSegmentWinding(j);
@@ -284,23 +245,20 @@ int GeoHandler::ReadGeometry() {
             vector<int> *ownerIDs = new vector<int>[gs->GetNumPoints()];
             for (int p = 0 ; p < gs->GetNumPoints(); p++) {
                 const GeoPoint *gp = gs->GetPoint(p);
-                
                 if (gp->IsDeleted()) printf("*");
                 else if (gp->type == ConnectedPoint) printf("+");
                 else printf(" ");
-                // printf("Found %.5lf at index %d (%.5lf)\n",gp->_p.x, idx, _pointList[idx]->_p.x);
-                printf("%d %x %d (%.5lf %.5lf):",gs->GetRef(0)->GetID(), gp, gsw->GetWindingDir(), gp->_p.x, gp->_p.y);
+                printf("%d %d (%.5lf %.5lf):",gs->GetRef(0)->GetID(), gsw->GetWindingDir(), gp->_p.x, gp->_p.y);
                 for (int owner=0; owner < gp->NumOwners(); owner++) {
                     printf("%d ",gp->GetOwner(owner)->GetID());
-                }
-              
+                }          
                 printf("\n");
             }
-            printf("---------\n");
+            if (j< gr->GetNumSegments()-1) printf("\n");
         }
+        printf("----------------\n");
     }
-
-    //std::sort(_refList.begin(), _refList.end(), GeoRef::IDSortPredicate);
+    
     return 0;
 }
 
@@ -393,7 +351,7 @@ int GeoHandler::HandleGeometry(OGRFeature *poFeature) {
     poFeatureO->SetGeometry( poGeometry );
     poFeatureO->SetField(poFeatureO->GetFieldIndex("RUIN"),1);
     //poFeatureO->SetField(poFeatureO->GetFieldIndex("RCID"),poFeature->GetFieldAsInteger(poFeature->GetFieldIndex("id")));
-    poFeatureO->SetField(poFeatureO->GetFieldIndex("RCID"),_gID++);
+    poFeatureO->SetField(poFeatureO->GetFieldIndex("RCID"),_globalFeatureID++);
     if( encLayer->CreateFeature( poFeatureO ) != OGRERR_NONE )
     {
         printf( "Failed to create feature in shapefile.\n" );
@@ -412,15 +370,15 @@ int GeoHandler::MakeConnectedNode(OGRPoint *p) {
      poFeature->SetField(poFeature->GetFieldIndex("RCNM"),RCNM_VC);
      poFeature->SetGeometry(p);
      poFeature->SetField(poFeature->GetFieldIndex("RUIN"),1);
-     poFeature->SetField(poFeature->GetFieldIndex("RCID"),_gID++);
+     poFeature->SetField(poFeature->GetFieldIndex("RCID"),_globalFeatureID++);
      if( encLayer->CreateFeature( poFeature ) != OGRERR_NONE )
      {
          printf( "Failed to create feature in shapefile.\n" );
          return -1;
      }
-     return _gID-1;
+     return _globalFeatureID-1;
 }
 
 int GeoHandler::GetGID() {
-    return _gID;
+    return _globalFeatureID;
 }

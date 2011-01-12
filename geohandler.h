@@ -24,7 +24,8 @@ public:
     
 private:
     OGRDataSource *_dataSource;
-    int _gID;
+    int _globalFeatureID;
+    int _globalSegmentID;
     //GeoPoint ** _pointList;
     int _pointListSize;
     int _pointListAllocSize;

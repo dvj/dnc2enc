@@ -79,8 +79,8 @@ void GeoPoint::CompareOwners(const GeoPoint *p, bool &loss, bool &gain) const {
 
 bool GeoPoint::operator==(const GeoPoint &p2) const {
     //printf("Comparing (%.8lf, %.8lf) to (%.8lf, %.8lf) ", this->_p.x, this->_p.y, p2._p.x, p2._p.y);
-    return (fabs(this->_p.x-p2._p.x) < _Gtolerance &&
-            fabs(this->_p.y-p2._p.y) < _Gtolerance);
+    return (fabs(this->_p.y-p2._p.y) < _Gtolerance &&
+            fabs(this->_p.x-p2._p.x) < _Gtolerance );
 }
 
 bool GeoPoint::operator==(const OGRPoint &p2) const {
