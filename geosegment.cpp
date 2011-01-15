@@ -6,6 +6,7 @@ GeoSegment::GeoSegment(int id) {
     _segmentID = id;
     _startPoint = NULL;
     _endPoint = NULL;
+    assigned = false;
 }
 
 GeoSegment::~GeoSegment() {

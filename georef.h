@@ -16,10 +16,11 @@ public:
     GeoSegmentWinding* GetSegmentWinding(int index) {return _segments[index];};
     int GetID() const {return _id;};
     bool static IDSortPredicate(const GeoRef *g1, const GeoRef *g2) {return g1->GetID() < g2->GetID();};
-
+    
     private:
     int _id;
     vector<GeoSegmentWinding *>_segments;
+    
 };
 
 

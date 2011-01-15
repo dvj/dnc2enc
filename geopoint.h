@@ -35,9 +35,12 @@ public:
     bool IsDeleted() const {return _isDeleted;};
     GeoPoint * GetMasterPoint() {if (IsDeleted()) return _masterPoint; else return NULL;};
     void CompareOwners(const GeoPoint *p, bool &loss, bool &gain) const;
+    const OGRPoint *GetOGRPointRef() const {return _ogrPointRef;};
     void SortOwners();
     PointType type;
     OGRRawPoint _p;
+    bool assigned;
+    int segmentID;
 private:
     bool _isDeleted;
     GeoPoint * _masterPoint;

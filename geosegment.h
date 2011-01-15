@@ -13,8 +13,8 @@ public:
     GeoSegment(int );
     ~GeoSegment();
     bool Split(int index, GeoSegment *out);
-    const GeoPoint *GetStartPoint() {return _startPoint;};
-    const GeoPoint *GetEndPoint() {return _endPoint;};
+    GeoPoint *GetStartPoint() {return _startPoint;};
+    GeoPoint *GetEndPoint() {return _endPoint;};
     const GeoPoint *GetPoint(int index) const;
     int GetNumPoints() const { return _points.size()+2;};
     void AddStartPoint(GeoPoint *p, GeoRef *);
@@ -23,12 +23,15 @@ public:
     const GeoRef* GetRef(int i)  const {return _references[i];};
     void FixPointReferences();
     int GetID() const {return _segmentID;};
+    bool assigned;
+    int originalWindingDir;
 private:
     vector<GeoRef *> _references;
     vector<GeoPoint *> _points;
     GeoPoint * _startPoint;
     GeoPoint * _endPoint;
     int _segmentID;
+
 };
 
 

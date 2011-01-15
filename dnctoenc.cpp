@@ -61,7 +61,7 @@ int ProcessFeatures(OGRDataSource *poDS, OGRDataSource *poOUT) {
     int f = 0;    
     map<string,int> lookuptable;
     BuildTables(&lookuptable);
-    GeoHandler *geoHandler = new GeoHandler(poOUT);
+    GeoHandler *geoHandler = new GeoHandler(poDS,poOUT);
         
     int layers = poDS->GetLayerCount();
     // layers = 50; //FIXME - remove this (stops random segfault)
@@ -238,7 +238,7 @@ int main(int argc, char **argv) {
     OGRDataSource *poOUT = openOutputFile(argv[2]);
 
     
-    GeoHandler *geoHandler = new GeoHandler(poDS);
+    GeoHandler *geoHandler = new GeoHandler(poDS, poOUT);
     
     geoHandler->ReadGeometry();
 

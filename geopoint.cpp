@@ -16,6 +16,8 @@ GeoPoint::GeoPoint(double x, double y, PointType pType, GeoRef *owner) {
     _owners.push_back(owner);
     _isDeleted = false;
     _masterPoint = NULL;
+    assigned = false;
+    segmentID = -1;
 }
 
 
@@ -26,7 +28,7 @@ GeoPoint::~GeoPoint() {
 
 
 void GeoPoint::SetOGRPointReference(OGRPoint *pr) {
-    _ogrPointRef = pr;
+    _ogrPointRef = (OGRPoint*)pr->clone();
 }
 
 void GeoPoint::Merge(GeoPoint *gp) {
