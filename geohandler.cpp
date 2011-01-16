@@ -4,6 +4,7 @@
 #include "georef.h"
 #include "mys57.h"
 #include "buildtables.h"
+
 GeoHandler::GeoHandler(OGRDataSource *datin, OGRDataSource *datout) {
     _globalFeatureID = 0;
     _globalSegmentID = 0;
@@ -239,7 +240,7 @@ void GeoHandler::ReProcessFeature(OGRFeature *feature) {
         
         if (feature->GetFieldIndex("hdp") != -1) {
             OGRPoint *p = (OGRPoint *)fgeo;
-            double d = feature->GetFieldAsDouble("hdp");
+            double d = feature->GetFieldAsDouble("hdp"); //TODO - check the units of this
             if (!isnan(d)) {
                 p->setZ(-d);
             }
@@ -454,17 +455,12 @@ int GeoHandler::ReadGeometry() {
     }
           
     _pointList.clear();
-    int dbgRefCount2 = 0;
     //now copy the list back to the vector, and sort the owners while we're at it
     for (list<GeoPoint *>::iterator i = plist.begin() ; i != plist.end(); i++ ) {
         _pointList.push_back(*i);
         (*i)->SortOwners();
-        //printf("%.8lf %.8lf %d\n", (*i)->_p.x, (*i)->_p.y, (*i)->NumOwners());
-        dbgRefCount2 += (*i)->NumOwners();
     }
 
-    printf("Size - before: %d   after: %d\n",dbgSize, _pointList.size());
-    printf("Reference Counts - before: %d   after: %d\n",dbgRefCount, dbgRefCount2);
     ///For each geometry segment, walk the points and build a list of others that share that point
     //Anytime someone joins or leaves, make it a ConnectedNode, and split the respective geometries
     for (unsigned i = 0 ; i < _refList.size() ; i++ ) {
@@ -516,9 +512,10 @@ int GeoHandler::ReadGeometry() {
     GeoSegment *gs, *gs2;
     GeoSegmentWinding *gsw, *gsw2;
     //trim down segments.
+
+    //TODO - Does this really work?
     int refListSize = _refList.size();
     for (unsigned i = 0 ; i < refListSize ; i++ ) {
-        //printf("%d of %d\n",i, refListSize);
         gr = _refList[i];
         for (int j = 0 ; j < gr->GetNumSegments(); j++) {
             gsw = gr->GetSegmentWinding(j);
@@ -591,106 +588,6 @@ int GeoHandler::ReadGeometry() {
     */
     return 0;
 }
-
-
-int GeoHandler::HandleGeometry(OGRFeature *poFeature) {
-    int madeGeoType = 0;
-    OGRGeometry *poGeometry;
-    poGeometry = poFeature->GetGeometryRef();
-    if( poGeometry == NULL) {
-        return 0;
-    }
-    OGRFeature *poFeatureO = NULL;
-    OGRLayer *encLayer;
-    if (wkbFlatten(poGeometry->getGeometryType()) == wkbPoint ) {
-        encLayer = _outputSource->GetLayer(0);
-        poFeatureO = OGRFeature::CreateFeature(encLayer->GetLayerDefn());            
-        poFeatureO->SetField(poFeatureO->GetFieldIndex("RCNM"),RCNM_VI);
-        madeGeoType = RCNM_VI;
-    } else if (wkbFlatten(poGeometry->getGeometryType()) == wkbLineString ) {
-        OGRLineString *line = (OGRLineString *)poGeometry;
-        madeGeoType = RCNM_VE;
-        OGRPoint *startPoint = new OGRPoint();
-        line->StartPoint(startPoint); 
-        OGRPoint *endPoint = new OGRPoint();
-        line->EndPoint(endPoint); 
-        int startNode = MakeConnectedNode(startPoint);
-        int endNode = MakeConnectedNode(endPoint);
-        encLayer = _outputSource->GetLayer(2);
-        poFeatureO = OGRFeature::CreateFeature(encLayer->GetLayerDefn());                
-        poFeatureO->SetField(poFeatureO->GetFieldIndex("RCNM"),madeGeoType);
-        poFeatureO->SetField(poFeatureO->GetFieldIndex("NAME_RCNM_0"),RCNM_VC);
-        poFeatureO->SetField(poFeatureO->GetFieldIndex("NAME_RCID_0"),startNode);
-        poFeatureO->SetField(poFeatureO->GetFieldIndex("NAME_RCNM_1"),RCNM_VC);
-        poFeatureO->SetField(poFeatureO->GetFieldIndex("NAME_RCID_1"),endNode);
-        poFeatureO->SetField(poFeatureO->GetFieldIndex("ORNT_0"),255);
-        poFeatureO->SetField(poFeatureO->GetFieldIndex("USAG_0"),255);
-        poFeatureO->SetField(poFeatureO->GetFieldIndex("TOPI_0"),1);
-        poFeatureO->SetField(poFeatureO->GetFieldIndex("MASK_0"),255);
-        
-    } else if (wkbFlatten(poGeometry->getGeometryType()) == wkbPolygon) {
-        OGRPolygon *poly = (OGRPolygon *) poGeometry;
-        OGRLineString *line = (OGRLineString *) poly->getExteriorRing();
-       
-        OGRPoint *startPoint = new OGRPoint();
-        line->StartPoint(startPoint); 
-        /*OGRPoint *endPoint = new OGRPoint();
-        line->EndPoint(endPoint); 
-        */
-        int startNode = MakeConnectedNode(startPoint);
-        //int endNode = MakeConnectedNode(endPoint);
-       
-        int rings = poly->getNumInteriorRings();
-        //TODO - something intelligent with the rings
-        /*
-        if (rings > 0) {
-            printf("Found %d interior rings\n",rings);
-            for (int r = 0;r<rings;r++) {
-                OGRLinearRing *ring = poly->getInteriorRing(r);
-                printf("  Ring %d is wound: %d, has %d nodes\n",r,ring->isClockwise(), ring->getNumPoints());
-            }
-            }*/
-        encLayer = _outputSource->GetLayer(2);
-        poFeatureO = OGRFeature::CreateFeature(encLayer->GetLayerDefn());            
-        poFeatureO->SetField(poFeatureO->GetFieldIndex("RCNM"),RCNM_VE);
-        poFeatureO->SetField(poFeatureO->GetFieldIndex("NAME_RCNM_0"),RCNM_VC);
-        poFeatureO->SetField(poFeatureO->GetFieldIndex("NAME_RCID_0"),startNode);
-        poFeatureO->SetField(poFeatureO->GetFieldIndex("NAME_RCNM_1"),RCNM_VC);
-        poFeatureO->SetField(poFeatureO->GetFieldIndex("NAME_RCID_1"),startNode);
-        poFeatureO->SetField(poFeatureO->GetFieldIndex("ORNT_0"),255);
-        poFeatureO->SetField(poFeatureO->GetFieldIndex("USAG_0"),255);
-        poFeatureO->SetField(poFeatureO->GetFieldIndex("TOPI_0"),1);
-        poFeatureO->SetField(poFeatureO->GetFieldIndex("MASK_0"),255);
-        poFeatureO->SetField(poFeatureO->GetFieldIndex("ORNT_1"),255);
-        poFeatureO->SetField(poFeatureO->GetFieldIndex("USAG_1"),255);
-        poFeatureO->SetField(poFeatureO->GetFieldIndex("TOPI_1"),2);
-        poFeatureO->SetField(poFeatureO->GetFieldIndex("MASK_1"),255);        
-        poGeometry = line;
-        madeGeoType = RCNM_VE;   
-    } else if (wkbFlatten(poGeometry->getGeometryType()) == wkbMultiPoint) {
-        encLayer = _outputSource->GetLayer(0);
-        poFeatureO->SetField(poFeatureO->GetFieldIndex("RCNM"),RCNM_VI);
-        poFeatureO = OGRFeature::CreateFeature(encLayer->GetLayerDefn());            
-        madeGeoType = RCNM_VI;
-    } else {
-        printf("OTHER GEOMETRY OF TYPE %d\n",poGeometry->getGeometryType());
-        encLayer = _outputSource->GetLayer(0);
-        poFeatureO = OGRFeature::CreateFeature(encLayer->GetLayerDefn());            
-        madeGeoType = RCNM_VI;
-    }
-    poFeatureO->SetGeometry( poGeometry );
-    poFeatureO->SetField(poFeatureO->GetFieldIndex("RUIN"),1);
-    poFeatureO->SetField(poFeatureO->GetFieldIndex("RCID"),_globalFeatureID++);
-    if( encLayer->CreateFeature( poFeatureO ) != OGRERR_NONE )
-    {
-        printf( "Failed to create feature in shapefile.\n" );
-        return 0;
-    }
-    //poFeatureO->DumpReadable(0,0);
-    OGRFeature::DestroyFeature(poFeatureO);
-    return madeGeoType;
-}
-
 
 
 int GeoHandler::MakeConnectedNode(const OGRPoint *p) {
