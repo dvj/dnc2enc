@@ -1,6 +1,13 @@
+#include <limits.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include "ogrsf_frmts.h"
 #include "buildtables.h"
 #include "geohandler.h"
+
+#ifndef PATH_MAX
+#define PATH_MAX 1024
+#endif
 
 using namespace std;
 
@@ -26,13 +33,17 @@ void ShowLayerDebugInfo(OGRLayer *layer) {
 OGRDataSource* openInputFile(char *input) {
     OGRRegisterAll();
     OGRDataSource  *poDS;
-    printf("Opening %s\n",input);
-    poDS = OGRSFDriverRegistrar::Open( input, FALSE );
+    char *input2 = new char[PATH_MAX+strlen(input)+10];
+    strcpy(input2, "gltp:/vrf");
+    realpath(input, input2+9);
+    printf("Opening %s\n",input2);
+    poDS = OGRSFDriverRegistrar::Open( input2, FALSE );
     if( poDS == NULL )
     {
-        printf( "Open failed.\n" );
+        printf( "Open failed. Did you give the full path of a DNC directory as the first argument?\n" );
         exit( 1 );
     }
+    delete[] input2;
     return poDS;
 }
 
@@ -234,6 +245,10 @@ int ProcessFeatures(OGRDataSource *poDS, OGRDataSource *poOUT) {
 }
 
 int main(int argc, char **argv) {
+    if (argc < 3) {
+        printf("Usage: %s <DNC directory> <output file>\n",argv[0]);
+        exit(0);
+    }
     OGRDataSource  *poDS = openInputFile(argv[1]);
     OGRDataSource *poOUT = openOutputFile(argv[2]);
 
