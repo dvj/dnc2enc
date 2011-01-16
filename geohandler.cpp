@@ -236,7 +236,17 @@ void GeoHandler::ReProcessFeature(OGRFeature *feature) {
         encLayer = _outputSource->GetLayer(0);
         poFeatureO = OGRFeature::CreateFeature(encLayer->GetLayerDefn());            
         poFeatureO->SetField(poFeatureO->GetFieldIndex("RCNM"),RCNM_VI);
-        poFeatureO->SetGeometry( fgeo );
+        
+        if (feature->GetFieldIndex("hdp") != -1) {
+            OGRPoint *p = (OGRPoint *)fgeo;
+            double d = feature->GetFieldAsDouble("hdp");
+            if (!isnan(d)) {
+                p->setZ(-d);
+            }
+            poFeatureO->SetGeometry(p);
+        } else {
+            poFeatureO->SetGeometry( fgeo );
+        }
         poFeatureO->SetField(poFeatureO->GetFieldIndex("RUIN"),1);
         poFeatureO->SetField(poFeatureO->GetFieldIndex("RCID"),_globalSegmentID++);
         if( encLayer->CreateFeature( poFeatureO ) != OGRERR_NONE )
@@ -353,7 +363,12 @@ void GeoHandler::ReProcessFeature(OGRFeature *feature) {
     if (feature->GetFieldIndex("nam") != -1 && poFeatureO->GetFieldIndex("OBJNAM") != -1) {
         poFeatureO->SetField(poFeatureO->GetFieldIndex("OBJNAM"), feature->GetFieldAsString(feature->GetFieldIndex("nam")));
     }
-
+    if (feature->GetFieldIndex("cvl") != -1 && poFeatureO->GetFieldIndex("DRVAL1") != -1) {
+        poFeatureO->SetField(poFeatureO->GetFieldIndex("DRVAL1"), feature->GetFieldAsInteger(feature->GetFieldIndex("cvl")));
+    }
+    if (feature->GetFieldIndex("cvh") != -1 && poFeatureO->GetFieldIndex("DRVAL2") != -1) {
+        poFeatureO->SetField(poFeatureO->GetFieldIndex("DRVAL2"), feature->GetFieldAsInteger(feature->GetFieldIndex("cvh")));
+    }
     //poFeatureO->DumpReadable(0,0);
     encLayer = _outputSource->GetLayer(poFeatureO->GetFieldAsInteger("OBJL")+3);
     if( encLayer->CreateFeature( poFeatureO ) != OGRERR_NONE )
