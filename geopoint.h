@@ -31,7 +31,7 @@ public:
    
     void Merge(GeoPoint *);
     int NumOwners() const {return _owners.size();};
-    const GeoRef * GetOwner(int index) const {return _owners[index];};
+    GeoRef * GetOwner(int index) const {return _owners[index];};
     bool IsDeleted() const {return _isDeleted;};
     GeoPoint * GetMasterPoint() {if (IsDeleted()) return _masterPoint; else return NULL;};
     void CompareOwners(const GeoPoint *p, bool &loss, bool &gain) const;
@@ -46,7 +46,7 @@ private:
     GeoPoint * _masterPoint;
     double _depth;
     OGRPoint *_ogrPointRef;
-    vector<const GeoRef *> _owners;
+    vector<GeoRef *> _owners;
 };
 
 

@@ -47,7 +47,7 @@ void GeoPoint::Merge(GeoPoint *gp) {
 
 void GeoPoint::SortOwners() {
     std::sort(_owners.begin(), _owners.end(), GeoRef::IDSortPredicate);
-    for (vector<const GeoRef*>::iterator i = _owners.begin(); i != _owners.end(); i++) {
+    for (vector<GeoRef*>::iterator i = _owners.begin(); i != _owners.end(); i++) {
         while (i+1 != _owners.end() && (*(i+1))->GetID() == (*i)->GetID())
             _owners.erase(i+1);
     }
@@ -55,8 +55,8 @@ void GeoPoint::SortOwners() {
 
 void GeoPoint::CompareOwners(const GeoPoint *p, bool &loss, bool &gain) const {
 
-    vector<const GeoRef *>::const_iterator i = _owners.begin();
-    vector<const GeoRef *>::const_iterator j = p->_owners.begin();
+    vector<GeoRef *>::const_iterator i = _owners.begin();
+    vector<GeoRef *>::const_iterator j = p->_owners.begin();
     gain = loss = false;
     while (i != _owners.end() && j != p->_owners.end()) {
         if ((*i)->GetID() == (*j)->GetID()) {

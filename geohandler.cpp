@@ -500,16 +500,28 @@ int GeoHandler::ReadGeometry() {
     GeoRef *gr2;
     GeoSegment *gs, *gs2;
     GeoSegmentWinding *gsw, *gsw2;
-    //trim down segments. this is n^2, but hopefully n isn't too big
+    //trim down segments.
     int refListSize = _refList.size();
     for (unsigned i = 0 ; i < refListSize ; i++ ) {
-        printf("%d of %d\n",i, refListSize);
+        //printf("%d of %d\n",i, refListSize);
         gr = _refList[i];
         for (int j = 0 ; j < gr->GetNumSegments(); j++) {
             gsw = gr->GetSegmentWinding(j);
             gs = gsw->GetSegment();
-            for (unsigned i2 = i+1 ; i2 < refListSize ; i2++ ) {
-                gr2 = _refList[i2];
+
+            vector<GeoRef *> allrefs;
+            //accumulate all the refs from the first and last point
+            for (int r = 0 ; r < gs->GetPoint(0)->NumOwners(); r++) {
+                allrefs.push_back(gs->GetPoint(0)->GetOwner(r));
+            }
+            for (int r = 0 ; r < gs->GetPoint(gs->GetNumPoints()-1)->NumOwners(); r++) {
+                if (std::find(allrefs.begin(),allrefs.end(),gs->GetPoint(0)->GetOwner(r)) != allrefs.end()) 
+                    allrefs.push_back(gs->GetPoint(gs->GetNumPoints()-1)->GetOwner(r));
+            }
+            // go through each reference
+            for (int r = 0 ; r < allrefs.size() ; r++ ) {
+                gr2 = allrefs[r];
+
                 int numSegs = gr2->GetNumSegments();
                 for (int j2 = 0 ; j2 < numSegs; j2++) {
                     gsw2 = gr2->GetSegmentWinding(j2);
