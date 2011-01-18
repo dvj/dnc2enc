@@ -15,17 +15,17 @@ public:
     ~GeoHandler();
     int MakeConnectedNode(const OGRPoint *p);
     int HandleGeometry(OGRFeature *poFeature);
-    int ReadGeometry();
+    vector<GeoRef*> ReadGeometry();
     GeoRef* ProcessFeature(OGRFeature *);
-    void ReProcessFeature(OGRFeature *);
+    //void ReProcessFeature(OGRFeature *);
     int GetGID();
-    GeoRef * LookupGeoRef(int id);
     int LookupPoint(const GeoPoint *p);
     GeoPoint* CreatePoint(OGRPoint *, PointType, GeoRef *);
     int AddLineString(const OGRLineString *ls, GeoSegment *, GeoRef *);
     vector<GeoRef *> GetGeoReferences(OGRGeometry *geometry);
     int WriteVectorRecords(vector<GeoRef *> vrecs);
-    void WriteFeatureRecords();
+    int GetNumSegments() {return _globalSegmentID;};
+    //void WriteFeatureRecords();
 private:
     OGRDataSource *_dataSource;
     OGRDataSource *_outputSource;
@@ -37,7 +37,6 @@ private:
     vector<GeoPoint *> _pointList;
     vector<GeoRef *> _refList;
     double _tolerance;
-    map<string,int> _lookuptable; //this should probably go in a diff class   
 };
 
 

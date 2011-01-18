@@ -4,6 +4,7 @@
 #include "ogrsf_frmts.h"
 #include "buildtables.h"
 #include "geohandler.h"
+#include "featurehandler.h"
 
 #ifndef PATH_MAX
 #define PATH_MAX 1024
@@ -72,8 +73,18 @@ int main(int argc, char **argv) {
 
     
     GeoHandler *geoHandler = new GeoHandler(poDS, poOUT);
+    FeatureHandler *featureHandler = new FeatureHandler(poDS,poOUT);
     
-    geoHandler->ReadGeometry();
+    vector<GeoRef*> geometryList = geoHandler->ReadGeometry();
+    
+    printf("Writing Vector records...");
+    fflush(stdout);
+    geoHandler->WriteVectorRecords(geometryList);
+    printf("Done\nWriting Feature Records...");
+    fflush(stdout);
+    featureHandler->WriteFeatureRecords(geometryList, geoHandler->GetNumSegments());
+    printf("Done\n");
+ 
 
     //ProcessFeatures(poDS, poOUT);
 
