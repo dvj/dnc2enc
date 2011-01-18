@@ -1,53 +1,159 @@
-AL015,Building,12
-AL020,Built-Up Area,13
-AL240,Tower (Non-Communication)
-AP030,Road,116
-AQ040,Bridge/Overpass/Viaduct,11
-AQ113,Pipeline/Pipe,94
-AT005,Cable,22
-AT080,Communication Tower
-BA010,Coastline/Shoreline,30
-BA020,Foreshore
-BA030,Island
-BA040,Water (Except Inland)
-BB010,Anchorage,4
-BB040,Breakwater/Groyne,122
-BB050,Calling-In Point
-BB140,US-Jetty  UK-Training Wall,122
-BB190,US-Pier/Wharf/Quay  UK-Pier/Wharf/Quay/Jetty,122
-BC010,Beacon,5,1
-BC020,Buoy,14,1
-BC040,Light,75
-BC100,Leading Line,85
-BD000,US-Underwater Danger/Hazard  UK-Underwater Danger
-BD030,US-Discolored Water  UK-Discoloured Water
-BD040,Eddies
-BD050,US-Foul Ground  UK-Foul
-BD080,Overfalls/Tide Rips
-BD120,Reef
-BD130,Rock,153
-BD180,Wreck,159
-BE010,Depth Curve,43
-BE020,Sounding,129
-BF010,US-Bottom Characteristics  UK-Quality of the Bottom
-BG010,US-Current Flow  UK-Current Flow/Tidal Stream Direction,136,1
-BG030,US-Tide Data Point  UK-Tidal Stream Observation Station,136,1
-BH020,Canal,23
-BH080,Lake/Pond,69
-BH130,Reservoir
-BH140,River/Stream,114
-BH210,Inland Shoreline
-BI020,Dam/Weir,38
-CA010,Contour Line (Land),72
-CA030,Spot Elevation,72
-DA010,Ground Surface Element
-DB090,Embankment/Fill
-FC021,Maritime Limit Boundary
-FC031,Maritime Area
-FC036,Restricted Area,112
-FC041,Traffic Separation Scheme (TSS),145,1
-FC100,Measured Distance Line
-FC165,Route (Maritime)
-GB005,US-Airport/Airfield  UK-Airport/Airfield/Airstrip,2
-GB055,Runway,2
-ZD040,Named Location,1
+AL015,0,Building,12
+AL015,1,Building,-1
+AL015,2,Building,12
+AL020,0,Built-Up Area,13
+AL020,1,Built-Up Area,-1
+AL020,2,Built-Up Area,13
+AL240,0,Tower (Non-Communication),-1
+AL240,1,Tower (Non-Communication),-1
+AL240,2,Tower (Non-Communication),-1
+AP030,0,Road,116
+AP030,1,Road,116
+AP030,2,Road,116
+AQ040,0,Bridge/Overpass/Viaduct,11
+AQ040,1,Bridge/Overpass/Viaduct,11
+AQ040,2,Bridge/Overpass/Viaduct,11
+AQ113,0,Pipeline/Pipe,94
+AQ113,1,Pipeline/Pipe,94
+AQ113,2,Pipeline/Pipe,92
+AT005,0,Cable,22
+AT005,1,Cable,22
+AT005,2,Cable,20
+AT080,0,Communication Tower,-1
+AT080,1,Communication Tower,-1
+AT080,2,Communication Tower,-1
+BA010,0,Coastline/Shoreline,-1
+BA010,1,Coastline/Shoreline,30
+BA010,2,Coastline/Shoreline,31
+BA020,0,Foreshore,-1
+BA020,1,Foreshore,-1
+BA020,2,Foreshore,32
+BA030,0,Island,-1
+BA030,1,Island,30
+BA030,2,Island,71
+BA040,0,Water (Except Inland),119
+BA040,1,Water (Except Inland),43
+BA040,2,Water (Except Inland),119
+BB010,0,Anchorage,4
+BB010,1,Anchorage,-1
+BB010,2,Anchorage,4
+BB040,0,Breakwater/Groyne,122
+BB040,1,Breakwater/Groyne,122
+BB040,2,Breakwater/Groyne,122
+BB050,0,Calling-In Point,-1
+BB050,1,Calling-In Point,-1
+BB050,2,Calling-In Point,-1
+BB140,0,US-Jetty  UK-Training Wall,122
+BB140,1,US-Jetty  UK-Training Wall,122
+BB140,2,US-Jetty  UK-Training Wall,122
+BB190,0,US-Pier/Wharf/Quay  UK-Pier/Wharf/Quay/Jetty,122
+BB190,1,US-Pier/Wharf/Quay  UK-Pier/Wharf/Quay/Jetty,122
+BB190,2,US-Pier/Wharf/Quay  UK-Pier/Wharf/Quay/Jetty,122
+BC010,0,Beacon,9
+BC010,1,Beacon,-1
+BC010,2,Beacon,-1
+BC020,0,Buoy,19
+BC020,1,Buoy,-1
+BC020,2,Buoy,-1
+BC040,0,Light,75
+BC040,1,Light,-1
+BC040,2,Light,-1
+BC100,0,Leading Line,-1
+BC100,1,Leading Line,85
+BC100,2,Leading Line,-1
+BD000,0,US-Underwater Danger/Hazard  UK-Underwater Danger,-1
+BD000,1,US-Underwater Danger/Hazard  UK-Underwater Danger,-1
+BD000,2,US-Underwater Danger/Hazard  UK-Underwater Danger,-1
+BD030,0,US-Discolored Water  UK-Discoloured Water,-1
+BD030,1,US-Discolored Water  UK-Discoloured Water,-1
+BD030,2,US-Discolored Water  UK-Discoloured Water,-1
+BD040,0,Eddies,86
+BD040,1,Eddies,-1
+BD040,2,Eddies,-1
+BD050,0,US-Foul Ground  UK-Foul,86
+BD050,1,US-Foul Ground  UK-Foul,-1
+BD050,2,US-Foul Ground  UK-Foul,-1
+BD080,0,Overfalls/Tide Rips,86
+BD080,1,Overfalls/Tide Rips,-1
+BD080,2,Overfalls/Tide Rips,-1
+BD120,0,Reef,96
+BD120,1,Reef,-1
+BD120,2,Reef,42
+BD130,0,Rock,153
+BD130,1,Rock,-1
+BD130,2,Rock,96
+BD180,0,Wreck,159
+BD180,1,Wreck,-1
+BD180,2,Wreck,159
+BE010,0,Depth Curve,-1
+BE010,1,Depth Curve,43
+BE010,2,Depth Curve,42
+BE020,0,Sounding,129
+BE020,1,Sounding,-1
+BE020,2,Sounding,-1
+BF010,0,US-Bottom Characteristics  UK-Quality of the Bottom,-1
+BF010,1,US-Bottom Characteristics  UK-Quality of the Bottom,-1
+BF010,2,US-Bottom Characteristics  UK-Quality of the Bottom,-1
+BG010,0,US-Current Flow  UK-Current Flow/Tidal Stream Direction,136
+BG010,1,US-Current Flow  UK-Current Flow/Tidal Stream Direction,-1
+BG010,2,US-Current Flow  UK-Current Flow/Tidal Stream Direction,136
+BG030,0,US-Tide Data Point  UK-Tidal Stream Observation Station,136
+BG030,1,US-Tide Data Point  UK-Tidal Stream Observation Station,-1
+BG030,2,US-Tide Data Point  UK-Tidal Stream Observation Station,136
+BH020,0,Canal,-1
+BH020,1,Canal,23
+BH020,2,Canal,23
+BH080,0,Lake/Pond,-1
+BH080,1,Lake/Pond,69
+BH080,2,Lake/Pond,69
+BH130,0,Reservoir,-1
+BH130,1,Reservoir,69
+BH130,2,Reservoir,69
+BH140,0,River/Stream,-1
+BH140,1,River/Stream,114
+BH140,2,River/Stream,114
+BH210,0,Inland Shoreline,-1
+BH210,1,Inland Shoreline,43
+BH210,2,Inland Shoreline,42
+BI020,0,Dam/Weir,38
+BI020,1,Dam/Weir,38
+BI020,2,Dam/Weir,38
+CA010,0,Contour Line (Land),-1
+CA010,1,Contour Line (Land),72
+CA010,2,Contour Line (Land),-1
+CA030,0,Spot Elevation,72
+CA030,1,Spot Elevation,72
+CA030,2,Spot Elevation,-1
+DA010,0,Ground Surface Element,-1
+DA010,1,Ground Surface Element,-1
+DA010,2,Ground Surface Element,71
+DB090,0,Embankment/Fill,-1
+DB090,1,Embankment/Fill,-1
+DB090,2,Embankment/Fill,-1
+FC021,0,Maritime Limit Boundary,-1
+FC021,1,Maritime Limit Boundary,-1
+FC021,2,Maritime Limit Boundary,-1
+FC031,0,Maritime Area,-1
+FC031,1,Maritime Area,42
+FC031,2,Maritime Area,42
+FC036,0,Restricted Area,-1
+FC036,1,Restricted Area,112
+FC036,2,Restricted Area,112
+FC041,0,Traffic Separation Scheme (TSS),-1
+FC041,1,Traffic Separation Scheme (TSS),146
+FC041,2,Traffic Separation Scheme (TSS),150
+FC100,0,Measured Distance Line,-1
+FC100,1,Measured Distance Line,-1
+FC100,2,Measured Distance Line,-1
+FC165,0,Route (Maritime),-1
+FC165,1,Route (Maritime),-1
+FC165,2,Route (Maritime),-1
+GB005,0,US-Airport/Airfield  UK-Airport/Airfield/Airstrip,2
+GB005,1,US-Airport/Airfield  UK-Airport/Airfield/Airstrip,2
+GB005,2,US-Airport/Airfield  UK-Airport/Airfield/Airstrip,2
+GB055,0,Runway,2
+GB055,1,Runway,2
+GB055,2,Runway,2
+ZD040,0,Named Location,-1
+ZD040,1,Named Location,1
+ZD040,2,Named Location,1

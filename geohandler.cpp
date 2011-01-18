@@ -285,8 +285,8 @@ void GeoHandler::ReProcessFeature(OGRFeature *feature) {
         geometryType = 2;
         strcat(sLookup,"_Line");
     } else if (geoType ==  wkbPolygon) {
-          geometryType = 3;
-          strcat(sLookup,"_Area");
+        geometryType = 3;
+        strcat(sLookup,"_Area");
           
     } else {
         fprintf(stderr, "Unhandled Geometry in ProcessFeature: %s\n", fgeo->getGeometryName());
@@ -296,7 +296,7 @@ void GeoHandler::ReProcessFeature(OGRFeature *feature) {
 
     int ENCLayerNum = _lookuptable[sLookup];
     if (ENCLayerNum == 0  || ENCLayerNum == -1) {
-        //printf("No available layer for %s, %s\n",poLayer->GetLayerDefn()->GetName(), sLookup);
+        //printf("No available layer for %s, %s, %s\n",f_code,feature->GetDefnRef()->GetName(), sLookup);
         return;
     }
     
@@ -364,12 +364,119 @@ void GeoHandler::ReProcessFeature(OGRFeature *feature) {
     if (feature->GetFieldIndex("nam") != -1 && poFeatureO->GetFieldIndex("OBJNAM") != -1) {
         poFeatureO->SetField(poFeatureO->GetFieldIndex("OBJNAM"), feature->GetFieldAsString(feature->GetFieldIndex("nam")));
     }
+    if (feature->GetFieldIndex("txt") != -1 && poFeatureO->GetFieldIndex("INFORM") != -1) {
+        poFeatureO->SetField(poFeatureO->GetFieldIndex("INFORM"), feature->GetFieldAsString(feature->GetFieldIndex("txt")));
+    } 
     if (feature->GetFieldIndex("cvl") != -1 && poFeatureO->GetFieldIndex("DRVAL1") != -1) {
-        poFeatureO->SetField(poFeatureO->GetFieldIndex("DRVAL1"), feature->GetFieldAsInteger(feature->GetFieldIndex("cvl")));
+        poFeatureO->SetField(poFeatureO->GetFieldIndex("DRVAL1"), feature->GetFieldAsDouble(feature->GetFieldIndex("cvl")));
     }
     if (feature->GetFieldIndex("cvh") != -1 && poFeatureO->GetFieldIndex("DRVAL2") != -1) {
-        poFeatureO->SetField(poFeatureO->GetFieldIndex("DRVAL2"), feature->GetFieldAsInteger(feature->GetFieldIndex("cvh")));
+        poFeatureO->SetField(poFeatureO->GetFieldIndex("DRVAL2"), feature->GetFieldAsDouble(feature->GetFieldIndex("cvh")));
     }
+    if (feature->GetFieldIndex("hdh") != -1 && poFeatureO->GetFieldIndex("DRVAL1") != -1) {
+        poFeatureO->SetField(poFeatureO->GetFieldIndex("DRVAL1"), -1.*feature->GetFieldAsDouble(feature->GetFieldIndex("hdh")));
+        double hdp = feature->GetFieldAsDouble(feature->GetFieldIndex("hdp"));
+        if (isnan(hdp)) hdp = 0;
+        poFeatureO->SetField(poFeatureO->GetFieldIndex("DRVAL2"), -1.*hdp);
+    }
+    if (feature->GetFieldIndex("eol") != -1 && poFeatureO->GetFieldIndex("VERLEN") != -1) {
+        double eol = feature->GetFieldAsDouble(feature->GetFieldIndex("eol"));
+        if (fabs(eol) < 30000) //null is sometimes indicated as -32768
+            poFeatureO->SetField(poFeatureO->GetFieldIndex("VERLEN"), eol);
+    }
+    if (feature->GetFieldIndex("ias") != -1 && poFeatureO->GetFieldIndex("CATTSS") != -1) {
+        int ias = feature->GetFieldAsInteger(feature->GetFieldIndex("ias"));
+        poFeatureO->SetField(poFeatureO->GetFieldIndex("CATTSS"), ias);
+    }
+
+    if (feature->GetFieldIndex("ccc") != -1 && poFeatureO->GetFieldIndex("COLOUR") != -1) {
+        int ccc = feature->GetFieldAsInteger(feature->GetFieldIndex("ccc"));
+        char *colour = new char[32];
+        strcpy(colour,"");
+        switch (ccc) 
+        {
+            case 1: strcpy(colour,"2"); break;
+            case 2: strcpy(colour,"5"); break;
+            case 3: strcpy(colour,"8"); break;
+            case 4: strcpy(colour,"7"); break;
+            case 5: strcpy(colour,"4"); break;
+            case 9: strcpy(colour,"11"); break;
+            case 12: strcpy(colour,"3"); break;
+            case 14: strcpy(colour,"10"); break;
+            case 15: strcpy(colour,"1"); break;
+            case 19: strcpy(colour,"6"); break;
+            default: break;
+        }
+        if (feature->GetFieldIndex("col")) {
+            const char *col = feature->GetFieldAsString(feature->GetFieldIndex("col"));
+            int index = -1;
+            int litchr = -1;
+            if (strncmp(col,"Fl",2) == 0) {
+                index = 3;
+                litchr = 2;
+            } else if (strncmp(col,"Iso",3) == 0) {
+                index = 4;
+                litchr = 7;
+            } else if (strncmp(col,"F",1) == 0) {
+                index = 2;
+                litchr = 1;
+            } else if (strncmp(col,"Q",1) == 0) {
+                index = 2;
+                litchr = 4;
+            } else if (strncmp(col,"Oc",1) == 0) {
+                index = 3;
+                litchr = 8;
+            }
+            if (index > 0) {
+                switch (col[index]) 
+                {
+                    case 'W': strcpy(colour, "1"); break;
+                    case 'L': strcpy(colour, "2"); break;
+                    case 'R': strcpy(colour, "3"); break;
+                    case 'G': strcpy(colour, "4"); break;
+                    case 'B': strcpy(colour, "5"); break;
+                    case 'Y': strcpy(colour, "6"); break;
+                }
+            }
+            if (litchr > 0 && poFeatureO->GetFieldIndex("LITCHR") != -1) {
+                poFeatureO->SetField(poFeatureO->GetFieldIndex("LITCHR"), litchr);
+            }
+        }
+        poFeatureO->SetField(poFeatureO->GetFieldIndex("COLOUR"), colour);
+        if (feature->GetFieldIndex("per") != -1 && poFeatureO->GetFieldIndex("SIGPER") != -1) {
+            poFeatureO->SetField(poFeatureO->GetFieldIndex("SIGPER"), feature->GetFieldAsDouble(feature->GetFieldIndex("per")));
+        }
+    }
+    if (feature->GetFieldIndex("ssc") != -1 && poFeatureO->GetFieldIndex("BOYSHP") != -1) {
+        int ssc = feature->GetFieldAsInteger(feature->GetFieldIndex("ssc"));
+        int boyshp = 0;
+        switch (ssc) 
+        {
+            case 1: boyshp = 6; break;
+            case 6: boyshp = 1; break;
+            case 7: boyshp = 2; break;
+            case 10: boyshp = 4; break;
+            case 16: boyshp = 5; break;
+            case 17: boyshp = 3; break;
+            case 73: boyshp = 7; break;
+            case 85: boyshp = 8; break;
+            default: break;
+        }
+        poFeatureO->SetField(poFeatureO->GetFieldIndex("BOYSHP"), boyshp);
+    }
+    if (feature->GetFieldIndex("btc") != -1 && poFeatureO->GetFieldIndex("CATSPM") != -1) {
+        int ssc = feature->GetFieldAsInteger(feature->GetFieldIndex("btc"));
+        int boyshp = 0;
+        switch (ssc) 
+        {
+            case 4: boyshp = 15; break;
+            case 7: boyshp = 14; break;
+            case 10: boyshp = 9; break;
+            default: break;
+        }
+        poFeatureO->SetField(poFeatureO->GetFieldIndex("CATSPM"), boyshp);
+    }
+   
     //poFeatureO->DumpReadable(0,0);
     encLayer = _outputSource->GetLayer(poFeatureO->GetFieldAsInteger("OBJL")+3);
     if( encLayer->CreateFeature( poFeatureO ) != OGRERR_NONE )
