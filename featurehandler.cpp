@@ -42,17 +42,20 @@ void FeatureHandler::ReProcessFeature(OGRFeature *feature, int featureID) {
     OGRwkbGeometryType geoType = fgeo->getGeometryType();
     OGRFeature *poFeatureO = NULL;
     OGRLayer *encLayer;
-
     int geometryType = 0;
-    const char *f_code;
+    const char *f_code = "";
     char *sLookup = new char[64];
     
     if (feature->GetFieldIndex("f_code") != -1) {
         f_code = feature->GetFieldAsString(feature->GetFieldIndex("f_code"));
         strcpy(sLookup,f_code);
     } else {
-        //printf("No f_code\n");
-        strcpy(sLookup,"");
+        const char* layernm = feature->GetDefnRef()->GetName();
+        int indx = 0;
+        while (indx < strlen(layernm) and layernm[indx] != '@') indx++;
+        //printf("%s\n",layernm);
+        strncpy(sLookup,layernm,indx);
+        sLookup[indx] = '\0';
     }
 
     if (geoType == wkbPoint) {
@@ -74,7 +77,7 @@ void FeatureHandler::ReProcessFeature(OGRFeature *feature, int featureID) {
         poFeatureO->SetField(poFeatureO->GetFieldIndex("RCID"),_globalSegmentID++);
         if( encLayer->CreateFeature( poFeatureO ) != OGRERR_NONE )
         {
-            printf( "Failed to create feature in shapefile.\n" );
+            printf( "Failed to create feature.\n" );
             return;
         }
 
@@ -91,7 +94,7 @@ void FeatureHandler::ReProcessFeature(OGRFeature *feature, int featureID) {
         poFeatureO->SetField(poFeatureO->GetFieldIndex("RCID"),_globalSegmentID++);
         if( encLayer->CreateFeature( poFeatureO ) != OGRERR_NONE )
         {
-            printf( "Failed to create feature in shapefile.\n" );
+            printf( "Failed to create feature.\n" );
             return;
         }
 
@@ -118,12 +121,23 @@ void FeatureHandler::ReProcessFeature(OGRFeature *feature, int featureID) {
 
     int ENCLayerNum = _lookuptable[sLookup];
     if (ENCLayerNum == 0  || ENCLayerNum == -1) {
-        //printf("No available layer for %s, %s, %s\n",f_code,feature->GetDefnRef()->GetName(), sLookup);
+        printf("No available layer for %s, %s, %s\n",f_code,feature->GetDefnRef()->GetName(), sLookup);
         return;
     }
     
-    encLayer = _outputSource->GetLayer(ENCLayerNum+3);
+    CommitFeature(feature, ENCLayerNum, featureID, geometryType);
+     if (feature->GetFieldIndex("scale") != -1 /*&& poFeatureO->GetFieldIndex("CSCALE") != -1*/) {
+        printf("Scale: %d\n",feature->GetFieldAsInteger(feature->GetFieldIndex("scale")));        
+        CommitFeature(feature, 162, featureID, geometryType);
+     }
     
+    return;
+
+}
+
+void FeatureHandler::CommitFeature(OGRFeature *feature, int ENCLayerNum, int featureID, int geometryType) {
+    OGRFeature *poFeatureO = NULL;
+    OGRLayer *encLayer = _outputSource->GetLayer(ENCLayerNum+3);
     poFeatureO = new OGRFeature(encLayer->GetLayerDefn());
     poFeatureO->SetField(poFeatureO->GetFieldIndex("RCID"),_globalSegmentID++);
     poFeatureO->SetField(poFeatureO->GetFieldIndex("PRIM"),geometryType);
@@ -135,7 +149,7 @@ void FeatureHandler::ReProcessFeature(OGRFeature *feature, int featureID) {
     } else {
         poFeatureO->SetField(poFeatureO->GetFieldIndex("GRUP"),2); 
     }
-
+    if (ENCLayerNum > 160) ENCLayerNum+=139;
     poFeatureO->SetField(poFeatureO->GetFieldIndex("OBJL"),ENCLayerNum);
     //poFeatureO->SetField(poFeatureO->GetFieldIndex("RUIN"),1);
     poFeatureO->SetField(poFeatureO->GetFieldIndex("RVER"),1);
@@ -144,7 +158,7 @@ void FeatureHandler::ReProcessFeature(OGRFeature *feature, int featureID) {
     
     poFeatureO->SetField(poFeatureO->GetFieldIndex("FIDN"),ENCLayerNum);
     poFeatureO->SetField(poFeatureO->GetFieldIndex("FIDS"),feature->GetFieldAsInteger(feature->GetFieldIndex("id")));
-    if ((geoType == wkbPoint || geoType == wkbMultiPoint)) {
+    if ((geometryType == 1)) {
         
         int *gl = new int[1];
         gl[0] = RCNM_VI;
@@ -182,6 +196,11 @@ void FeatureHandler::ReProcessFeature(OGRFeature *feature, int featureID) {
         poFeatureO->SetField(poFeatureO->GetFieldIndex("ORNT"),numSegs,ornt);
         poFeatureO->SetField(poFeatureO->GetFieldIndex("USAG"),numSegs,usag);
         poFeatureO->SetField(poFeatureO->GetFieldIndex("MASK"),numSegs,mask);
+        delete [] rcnm;
+        delete [] rcid;
+        delete [] ornt;
+        delete [] usag;
+        delete [] mask;
     }
     if (feature->GetFieldIndex("nam") != -1 && poFeatureO->GetFieldIndex("OBJNAM") != -1) {
         poFeatureO->SetField(poFeatureO->GetFieldIndex("OBJNAM"), feature->GetFieldAsString(feature->GetFieldIndex("nam")));
@@ -195,12 +214,17 @@ void FeatureHandler::ReProcessFeature(OGRFeature *feature, int featureID) {
     if (feature->GetFieldIndex("cvh") != -1 && poFeatureO->GetFieldIndex("DRVAL2") != -1) {
         poFeatureO->SetField(poFeatureO->GetFieldIndex("DRVAL2"), feature->GetFieldAsDouble(feature->GetFieldIndex("cvh")));
     }
+    if (feature->GetFieldIndex("scale") != -1 && poFeatureO->GetFieldIndex("CSCALE") != -1) {
+        poFeatureO->SetField(poFeatureO->GetFieldIndex("CSCALE"), feature->GetFieldAsInteger(feature->GetFieldIndex("scale")));
+    }   
+     
     if (feature->GetFieldIndex("hdh") != -1 && poFeatureO->GetFieldIndex("DRVAL1") != -1) {
         poFeatureO->SetField(poFeatureO->GetFieldIndex("DRVAL1"), -1.*feature->GetFieldAsDouble(feature->GetFieldIndex("hdh")));
         double hdp = feature->GetFieldAsDouble(feature->GetFieldIndex("hdp"));
         if (isnan(hdp)) hdp = 0;
         poFeatureO->SetField(poFeatureO->GetFieldIndex("DRVAL2"), -1.*hdp);
     }
+   
     if (feature->GetFieldIndex("eol") != -1 && poFeatureO->GetFieldIndex("VERLEN") != -1) {
         double eol = feature->GetFieldAsDouble(feature->GetFieldIndex("eol"));
         if (fabs(eol) < 30000) //null is sometimes indicated as -32768
@@ -268,6 +292,7 @@ void FeatureHandler::ReProcessFeature(OGRFeature *feature, int featureID) {
         if (feature->GetFieldIndex("per") != -1 && poFeatureO->GetFieldIndex("SIGPER") != -1) {
             poFeatureO->SetField(poFeatureO->GetFieldIndex("SIGPER"), feature->GetFieldAsDouble(feature->GetFieldIndex("per")));
         }
+        delete []colour;
     }
     if (feature->GetFieldIndex("ssc") != -1 && poFeatureO->GetFieldIndex("BOYSHP") != -1) {
         int ssc = feature->GetFieldAsInteger(feature->GetFieldIndex("ssc"));
@@ -300,7 +325,7 @@ void FeatureHandler::ReProcessFeature(OGRFeature *feature, int featureID) {
     }
    
     //poFeatureO->DumpReadable(0,0);
-    encLayer = _outputSource->GetLayer(poFeatureO->GetFieldAsInteger("OBJL")+3);
+    //encLayer = _outputSource->GetLayer(poFeatureO->GetFieldAsInteger("OBJL")+3);
     if( encLayer->CreateFeature( poFeatureO ) != OGRERR_NONE )
     {
         printf( "Failed to create feature in shapefile.\n" );   
@@ -331,6 +356,7 @@ void FeatureHandler::WriteFeatureRecords(vector<GeoRef*> geoRefs, int numSegment
         OGRFeature *feature;
         layer->ResetReading();
         while( (feature = layer->GetNextFeature()) != NULL ) {
+            if (strncasecmp("libref",feature->GetDefnRef()->GetName(),6) == 0) continue;
             featureID++;
             ReProcessFeature(feature, featureID);
         }

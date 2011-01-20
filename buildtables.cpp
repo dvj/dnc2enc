@@ -7,6 +7,9 @@ void BuildTables(map<string,int> *m) {
      (*m)["AL015_Point"] = 12;
      (*m)["AL015_Line"] = -1;
      (*m)["AL015_Area"] = 12;
+     (*m)["AL018_Point"] = 12;
+     (*m)["AL018_Area"] = 12;
+     (*m)["AL018_Area"] = 12;
      (*m)["AL020_Point"] = 13;
      (*m)["AL020_Line"] = -1;
      (*m)["AL020_Area"] = 13;
@@ -78,7 +81,7 @@ void BuildTables(map<string,int> *m) {
      (*m)["BD040_Area"] = -1;
      (*m)["BD050_Point"] = 86;
      (*m)["BD050_Line"] = -1;
-     (*m)["BD050_Area"] = -1;
+     (*m)["BD050_Area"] = 86;
      (*m)["BD080_Point"] = 86;
      (*m)["BD080_Line"] = -1;
      (*m)["BD080_Area"] = -1;
@@ -163,5 +166,6 @@ void BuildTables(map<string,int> *m) {
      (*m)["ZD040_Point"] = -1;
      (*m)["ZD040_Line"] = 1;
      (*m)["ZD040_Area"] = 1;
+     (*m)["dqyarea_Area"] = 163;
    return;
 }

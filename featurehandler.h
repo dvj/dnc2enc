@@ -11,6 +11,7 @@ public:
     ~FeatureHandler();
     void ReProcessFeature(OGRFeature *feature, int);
     void WriteFeatureRecords(vector<GeoRef *>, int );
+    void CommitFeature(OGRFeature*, int,int,int);
     GeoRef * LookupGeoRef(int id);
 private:
     OGRDataSource *_dataSource;

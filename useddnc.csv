@@ -1,6 +1,9 @@
 AL015,0,Building,12
 AL015,1,Building,-1
 AL015,2,Building,12
+AL018,0,Building,12
+AL018,2,Building,12
+
 AL020,0,Built-Up Area,13
 AL020,1,Built-Up Area,-1
 AL020,2,Built-Up Area,13
@@ -72,7 +75,7 @@ BD040,1,Eddies,-1
 BD040,2,Eddies,-1
 BD050,0,US-Foul Ground  UK-Foul,86
 BD050,1,US-Foul Ground  UK-Foul,-1
-BD050,2,US-Foul Ground  UK-Foul,-1
+BD050,2,US-Foul Ground  UK-Foul,86
 BD080,0,Overfalls/Tide Rips,86
 BD080,1,Overfalls/Tide Rips,-1
 BD080,2,Overfalls/Tide Rips,-1
@@ -157,3 +160,4 @@ GB055,2,Runway,2
 ZD040,0,Named Location,-1
 ZD040,1,Named Location,1
 ZD040,2,Named Location,1
+dqyarea,2,,163

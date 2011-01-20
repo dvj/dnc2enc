@@ -205,6 +205,7 @@ vector<GeoRef*> GeoHandler::ReadGeometry() {
         OGRFeature *feature;
         layer->ResetReading();
         while( (feature = layer->GetNextFeature()) != NULL ) {
+            if (strncasecmp("libref",feature->GetDefnRef()->GetName(),6) == 0) continue;
             _globalFeatureID++;
             ProcessFeature(feature);
         }
